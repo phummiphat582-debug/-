@@ -1,165 +1,92 @@
-const STORAGE_PREFIX = 'PO_DATA_PRINT_BIG_';
-let deleteTargetBtn = null;
+function addRow(){
+  const tbody=document.getElementById('tbody');
+  const i=tbody.children.length/2+1;
 
-function addRow(data = {}) {
-  const tbody = document.getElementById('tbody');
-  const index = tbody.children.length / 2 + 1;
-
-  const main = document.createElement('tr');
-  main.innerHTML = `
-    <td>${index}</td>
-    <td><textarea>${data.desc || ''}</textarea></td>
-    <td class="img-col">
+  const main=document.createElement('tr');
+  main.innerHTML=`
+    <td>${i}</td>
+    <td><textarea oninput="autoGrow(this)"></textarea></td>
+    <td>
       <div class="img-box" onclick="this.querySelector('input').click()">
-        <input type="file" accept="image/*" hidden>
-        <img style="display:none">
+        <input type="file" accept="image/*" onchange="previewImage(this)" hidden>
+        <img>
       </div>
     </td>
-    <td><input value="${data.unit || ''}"></td>
-    <td><input type="number" value="${data.stock || ''}"></td>
-    <td><input type="number" value="${data.remain || ''}"></td>
-    <td><input type="number" class="buy" value="${data.buy || ''}" oninput="calcRow(this)"></td>
-    <td><input type="number" class="price" value="${data.price || ''}" oninput="calcRow(this)"></td>
+    <td><input></td>
+    <td><input type="number"></td>
+    <td><input type="number"></td>
+    <td><input type="number" class="buy" oninput="calc(this)"></td>
+    <td><input type="number" class="price" oninput="calc(this)"></td>
     <td class="sum">0.00</td>
-    <td><input value="${data.vendor || ''}"></td>
-    <td class="delete-col no-print">
-      <button class="delete-btn" onclick="openModal(this)">🗑</button>
-    </td>
+    <td><input type="url" placeholder="ชื่อร้าน / https://"></td>
   `;
 
-  const sub = document.createElement('tr');
-  sub.className = 'sub-row';
-  sub.innerHTML = `
-    <td colspan="11">
+  const sub=document.createElement('tr');
+  sub.className='sub-row';
+  sub.innerHTML=`
+    <td colspan="10">
       <div class="sub-grid">
-        <div><label>จุดประสงค์</label><textarea>${data.purpose || ''}</textarea></div>
-        <div><label>ใช้งานที่</label><textarea>${data.place || ''}</textarea></div>
+        <div>
+          <label>จุดประสงค์</label>
+          <textarea oninput="autoGrow(this)"></textarea>
+        </div>
+        <div>
+          <label>ใช้งานที่</label>
+          <textarea oninput="autoGrow(this)"></textarea>
+        </div>
       </div>
     </td>
   `;
 
   tbody.appendChild(main);
   tbody.appendChild(sub);
+}
 
-  const fileInput = main.querySelector('input[type=file]');
-  const img = main.querySelector('img');
+function autoGrow(el){
+  el.style.height='auto';
+  el.style.height=el.scrollHeight+'px';
+}
 
-  fileInput.addEventListener('change', () => {
-    const file = fileInput.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      img.src = e.target.result;
-      img.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
+function previewImage(input){
+  const img=input.parentElement.querySelector('img');
+  const file=input.files[0];
+  if(!file) return;
+  const r=new FileReader();
+  r.onload=e=>{
+    img.src=e.target.result;
+    img.style.display='block';
+  };
+  r.readAsDataURL(file);
+}
+
+function calc(el){
+  const r=el.closest('tr');
+  const q=r.querySelector('.buy').value||0;
+  const p=r.querySelector('.price').value||0;
+  r.querySelector('.sum').innerText=(q*p).toFixed(2);
+  let total=0;
+  document.querySelectorAll('.sum').forEach(s=>total+=parseFloat(s.innerText));
+  document.getElementById('grand').innerText=total.toFixed(2);
+}
+
+function exportPDF(){
+  document.body.classList.add('pdf-mode');
+
+  document.querySelectorAll('textarea').forEach(t=>{
+    t.style.height='auto';
+    t.style.height=t.scrollHeight+'px';
   });
 
-  if (data.img) {
-    img.src = data.img;
-    img.style.display = 'block';
-  }
-
-  calcAll();
-}
-
-function openModal(btn) {
-  deleteTargetBtn = btn;
-  document.getElementById('deleteModal').classList.add('show');
-}
-
-function closeModal() {
-  deleteTargetBtn = null;
-  document.getElementById('deleteModal').classList.remove('show');
-}
-
-function confirmDelete() {
-  if (!deleteTargetBtn) return;
-  const main = deleteTargetBtn.closest('tr');
-  const sub = main.nextElementSibling;
-  if (sub && sub.classList.contains('sub-row')) sub.remove();
-  main.remove();
-  closeModal();
-  reindex();
-  calcAll();
-  saveData();
-}
-
-function reindex() {
-  const rows = document.querySelectorAll('#tbody tr');
-  let i = 1;
-  for (let r = 0; r < rows.length; r += 2) {
-    rows[r].children[0].innerText = i++;
-  }
-}
-
-function calcRow(el) {
-  const row = el.closest('tr');
-  const buy = row.querySelector('.buy').value || 0;
-  const price = row.querySelector('.price').value || 0;
-  row.querySelector('.sum').innerText = (buy * price).toFixed(2);
-  calcAll();
-}
-
-function calcAll() {
-  let total = 0;
-  document.querySelectorAll('.sum').forEach(s => {
-    total += parseFloat(s.innerText || 0);
-  });
-  document.getElementById('grand').innerText = total.toFixed(2);
-}
-
-function saveData() {
-  const month = document.getElementById('month').value;
-  if (!month) return;
-
-  const rows = [];
-  const trs = document.querySelectorAll('#tbody tr');
-  for (let i = 0; i < trs.length; i += 2) {
-    const m = trs[i], s = trs[i + 1];
-    rows.push({
-      desc: m.querySelector('textarea').value,
-      img: m.querySelector('img').src || '',
-      unit: m.querySelectorAll('input')[1].value,
-      stock: m.querySelectorAll('input')[2].value,
-      remain: m.querySelectorAll('input')[3].value,
-      buy: m.querySelector('.buy').value,
-      price: m.querySelector('.price').value,
-      vendor: m.querySelectorAll('input')[4].value,
-      purpose: s.querySelectorAll('textarea')[0].value,
-      place: s.querySelectorAll('textarea')[1].value
+  setTimeout(()=>{
+    html2pdf().from(document.getElementById('pdf-area')).set({
+      filename:'Purchase_Order_A4_Final.pdf',
+      html2canvas:{ scale:1, useCORS:true },
+      jsPDF:{ unit:'mm', format:'a4', orientation:'landscape' },
+      pagebreak:{ mode:['css','legacy'] }
+    }).save().then(()=>{
+      document.body.classList.remove('pdf-mode');
     });
-  }
-
-  localStorage.setItem(
-    STORAGE_PREFIX + month,
-    JSON.stringify({
-      month,
-      dept: document.getElementById('dept').value,
-      rows
-    })
-  );
+  },300);
 }
-
-function loadData() {
-  const month = document.getElementById('month').value;
-  document.getElementById('tbody').innerHTML = '';
-  if (!month) {
-    addRow();
-    return;
-  }
-
-  const data = JSON.parse(localStorage.getItem(STORAGE_PREFIX + month));
-  if (!data) {
-    addRow();
-    return;
-  }
-
-  document.getElementById('dept').value = data.dept;
-  data.rows.forEach(r => addRow(r));
-  calcAll();
-}
-
-document.getElementById('month').addEventListener('change', loadData);
 
 addRow();
