@@ -1,11 +1,14 @@
+const monthInput=document.getElementById('monthPicker');
+monthInput.addEventListener('change',loadMonth);
+
 function addRow(){
   const tbody=document.getElementById('tbody');
   const i=tbody.children.length/2+1;
 
   const main=document.createElement('tr');
   main.innerHTML=`
-    <td>${i}</td>
-    <td><textarea oninput="autoGrow(this)"></textarea></td>
+    <td class="no">${i}</td>
+    <td><textarea></textarea></td>
     <td>
       <div class="img-box" onclick="this.querySelector('input').click()">
         <input type="file" accept="image/*" onchange="previewImage(this)" hidden>
@@ -18,33 +21,32 @@ function addRow(){
     <td><input type="number" class="buy" oninput="calc(this)"></td>
     <td><input type="number" class="price" oninput="calc(this)"></td>
     <td class="sum">0.00</td>
-    <td><input type="url" placeholder="ชื่อร้าน / https://"></td>
+    <td><input></td>
+    <td><button class="btn-del" onclick="deleteRow(this)">🗑</button></td>
   `;
 
   const sub=document.createElement('tr');
   sub.className='sub-row';
   sub.innerHTML=`
-    <td colspan="10">
+    <td colspan="11">
       <div class="sub-grid">
-        <div>
-          <label>จุดประสงค์</label>
-          <textarea oninput="autoGrow(this)"></textarea>
-        </div>
-        <div>
-          <label>ใช้งานที่</label>
-          <textarea oninput="autoGrow(this)"></textarea>
-        </div>
+        <div><label>จุดประสงค์</label><textarea></textarea></div>
+        <div><label>ใช้งานที่</label><textarea></textarea></div>
       </div>
-    </td>
-  `;
+    </td>`;
 
-  tbody.appendChild(main);
-  tbody.appendChild(sub);
+  tbody.append(main,sub);
+  saveMonth();
 }
 
-function autoGrow(el){
-  el.style.height='auto';
-  el.style.height=el.scrollHeight+'px';
+function deleteRow(btn){
+  if(!confirm('ยืนยันการลบรายการนี้ใช่ไหม?')) return;
+  const tr=btn.closest('tr');
+  tr.nextElementSibling.remove();
+  tr.remove();
+  renumber();
+  recalcGrand();
+  saveMonth();
 }
 
 function previewImage(input){
@@ -52,10 +54,7 @@ function previewImage(input){
   const file=input.files[0];
   if(!file) return;
   const r=new FileReader();
-  r.onload=e=>{
-    img.src=e.target.result;
-    img.style.display='block';
-  };
+  r.onload=e=>{img.src=e.target.result;img.style.display='block';};
   r.readAsDataURL(file);
 }
 
@@ -64,29 +63,63 @@ function calc(el){
   const q=r.querySelector('.buy').value||0;
   const p=r.querySelector('.price').value||0;
   r.querySelector('.sum').innerText=(q*p).toFixed(2);
-  let total=0;
-  document.querySelectorAll('.sum').forEach(s=>total+=parseFloat(s.innerText));
-  document.getElementById('grand').innerText=total.toFixed(2);
+  recalcGrand();
 }
 
-function exportPDF(){
-  document.body.classList.add('pdf-mode');
+function recalcGrand(){
+  let t=0;
+  document.querySelectorAll('.sum').forEach(s=>t+=parseFloat(s.innerText||0));
+  document.getElementById('grand').innerText=t.toFixed(2);
+}
 
-  document.querySelectorAll('textarea').forEach(t=>{
-    t.style.height='auto';
-    t.style.height=t.scrollHeight+'px';
+function renumber(){
+  document.querySelectorAll('.no').forEach((n,i)=>n.innerText=i+1);
+}
+
+function saveMonth(){
+  if(!monthInput.value) return;
+  const data=[];
+  document.querySelectorAll('#tbody tr').forEach(tr=>{
+    if(!tr.classList.contains('sub-row')){
+      data.push({main:tr.innerHTML,sub:tr.nextElementSibling.innerHTML});
+    }
   });
+  localStorage.setItem('PO_'+monthInput.value,JSON.stringify(data));
+}
 
-  setTimeout(()=>{
-    html2pdf().from(document.getElementById('pdf-area')).set({
-      filename:'Purchase_Order_A4_Final.pdf',
-      html2canvas:{ scale:1, useCORS:true },
-      jsPDF:{ unit:'mm', format:'a4', orientation:'landscape' },
-      pagebreak:{ mode:['css','legacy'] }
-    }).save().then(()=>{
-      document.body.classList.remove('pdf-mode');
-    });
-  },300);
+function loadMonth(){
+  const raw=localStorage.getItem('PO_'+monthInput.value);
+  tbody.innerHTML='';
+  if(!raw){addRow();return;}
+  JSON.parse(raw).forEach(d=>{
+    const m=document.createElement('tr');m.innerHTML=d.main;
+    const s=document.createElement('tr');s.className='sub-row';s.innerHTML=d.sub;
+    tbody.append(m,s);
+  });
+  recalcGrand();
+}
+
+function copyFromMonth(){
+  if(!monthInput.value){
+    alert('กรุณาเลือกเดือนปลายทางก่อน');
+    return;
+  }
+
+  const from = prompt('กรุณาใส่เดือนต้นทาง (เช่น 2026-01)');
+  if(!from) return;
+
+  const to = monthInput.value;
+  const raw = localStorage.getItem('PO_' + from);
+  if(!raw){
+    alert('ไม่พบข้อมูลของเดือน ' + from);
+    return;
+  }
+
+  const ok = confirm(`จะคัดลอกข้อมูลจากเดือน ${from} ไปยังเดือน ${to} ใช่ไหม?`);
+  if(!ok) return;
+
+  localStorage.setItem('PO_' + to, raw);
+  loadMonth();
 }
 
 addRow();
