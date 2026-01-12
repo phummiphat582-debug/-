@@ -1,10 +1,8 @@
 const monthInput=document.getElementById('monthPicker');
-const tbody=document.getElementById('tbody');
 monthInput.addEventListener('change',loadMonth);
 
-let deleteTarget=null;
-
 function addRow(){
+  const tbody=document.getElementById('tbody');
   const i=tbody.children.length/2+1;
 
   const main=document.createElement('tr');
@@ -24,7 +22,7 @@ function addRow(){
     <td><input type="number" class="price" oninput="calc(this)"></td>
     <td class="sum">0.00</td>
     <td><input></td>
-    <td><button class="btn-del" onclick="requestDelete(this)">🗑</button></td>
+    <td><button class="btn-del" onclick="deleteRow(this)">🗑</button></td>
   `;
 
   const sub=document.createElement('tr');
@@ -41,26 +39,16 @@ function addRow(){
   saveMonth();
 }
 
-/* DELETE MODAL */
-function requestDelete(btn){
-  deleteTarget = btn.closest('tr');
-  document.getElementById('deleteModal').classList.add('show');
-}
-function closeDeleteModal(){
-  document.getElementById('deleteModal').classList.remove('show');
-}
-function confirmDelete(){
-  if(!deleteTarget) return;
-  const sub=deleteTarget.nextElementSibling;
-  if(sub && sub.classList.contains('sub-row')) sub.remove();
-  deleteTarget.remove();
-  closeDeleteModal();
+function deleteRow(btn){
+  if(!confirm('ยืนยันการลบรายการนี้ใช่ไหม?')) return;
+  const tr=btn.closest('tr');
+  tr.nextElementSibling.remove();
+  tr.remove();
   renumber();
   recalcGrand();
   saveMonth();
 }
 
-/* IMAGE */
 function previewImage(input){
   const img=input.parentElement.querySelector('img');
   const file=input.files[0];
@@ -70,7 +58,6 @@ function previewImage(input){
   r.readAsDataURL(file);
 }
 
-/* CALC */
 function calc(el){
   const r=el.closest('tr');
   const q=r.querySelector('.buy').value||0;
@@ -78,16 +65,17 @@ function calc(el){
   r.querySelector('.sum').innerText=(q*p).toFixed(2);
   recalcGrand();
 }
+
 function recalcGrand(){
   let t=0;
   document.querySelectorAll('.sum').forEach(s=>t+=parseFloat(s.innerText||0));
   document.getElementById('grand').innerText=t.toFixed(2);
 }
+
 function renumber(){
   document.querySelectorAll('.no').forEach((n,i)=>n.innerText=i+1);
 }
 
-/* SAVE / LOAD */
 function saveMonth(){
   if(!monthInput.value) return;
   const data=[];
@@ -98,6 +86,7 @@ function saveMonth(){
   });
   localStorage.setItem('PO_'+monthInput.value,JSON.stringify(data));
 }
+
 function loadMonth(){
   const raw=localStorage.getItem('PO_'+monthInput.value);
   tbody.innerHTML='';
@@ -110,22 +99,14 @@ function loadMonth(){
   recalcGrand();
 }
 
-/* COPY MODAL */
-function openCopyModal(){
-  document.getElementById('copyModal').classList.add('show');
-  document.getElementById('toMonth').value = monthInput.value;
-}
-function closeCopyModal(){
-  document.getElementById('copyModal').classList.remove('show');
-}
-function confirmCopy(){
-  const from=document.getElementById('fromMonth').value;
-  const to=document.getElementById('toMonth').value;
-  if(!from||!to) return alert('กรุณาเลือกเดือนให้ครบ');
-  const raw=localStorage.getItem('PO_'+from);
-  if(!raw) return alert('ไม่พบข้อมูลเดือนต้นทาง');
-  localStorage.setItem('PO_'+to,raw);
-  closeCopyModal();
+function copyPrevMonth(){
+  if(!monthInput.value) return alert('กรุณาเลือกเดือน');
+  const d=new Date(monthInput.value+'-01');
+  d.setMonth(d.getMonth()-1);
+  const prev=d.toISOString().slice(0,7);
+  const raw=localStorage.getItem('PO_'+prev);
+  if(!raw) return alert('ไม่พบข้อมูลเดือนก่อน');
+  localStorage.setItem('PO_'+monthInput.value,raw);
   loadMonth();
 }
 
