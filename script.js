@@ -99,26 +99,22 @@ function loadMonth(){
   recalcGrand();
 }
 
-function copyFromMonth(){
-  if(!monthInput.value){
-    alert('กรุณาเลือกเดือนปลายทางก่อน');
-    return;
-  }
-
-  const from = prompt('กรุณาใส่เดือนต้นทาง (เช่น 2026-01)');
-  if(!from) return;
-
-  const to = monthInput.value;
-  const raw = localStorage.getItem('PO_' + from);
-  if(!raw){
-    alert('ไม่พบข้อมูลของเดือน ' + from);
-    return;
-  }
-
-  const ok = confirm(`จะคัดลอกข้อมูลจากเดือน ${from} ไปยังเดือน ${to} ใช่ไหม?`);
-  if(!ok) return;
-
-  localStorage.setItem('PO_' + to, raw);
+/* COPY MODAL */
+function openCopyModal(){
+  document.getElementById('copyModal').classList.add('show');
+  document.getElementById('toMonth').value = monthInput.value;
+}
+function closeCopyModal(){
+  document.getElementById('copyModal').classList.remove('show');
+}
+function confirmCopy(){
+  const from=document.getElementById('fromMonth').value;
+  const to=document.getElementById('toMonth').value;
+  if(!from||!to) return alert('กรุณาเลือกเดือนให้ครบ');
+  const raw=localStorage.getItem('PO_'+from);
+  if(!raw) return alert('ไม่พบข้อมูลเดือนต้นทาง');
+  localStorage.setItem('PO_'+to,raw);
+  closeCopyModal();
   loadMonth();
 }
 
