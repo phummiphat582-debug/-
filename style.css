@@ -1,28 +1,66 @@
-*{box-sizing:border-box}
-body{margin:0;background:#f0f1f3;font-family:Segoe UI,Tahoma,sans-serif;color:#222}
-.page{max-width:1800px;margin:32px auto;background:#fff;padding:32px 36px;border-radius:16px}
-.header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #d6d9de;padding-bottom:16px}
-.header-left h1{margin:0;font-size:28px}
-.header-left h2{margin:4px 0 0;font-size:16px;color:#666}
-.header-right{display:flex;gap:20px}
-label{font-size:13px;font-weight:600;color:#555;display:block;margin-bottom:6px}
-input,textarea{width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:10px;font-size:13px}
-.card{margin-top:24px;background:#fafafa;padding:20px;border-radius:16px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th{background:#2f2f2f;color:#fff;padding:10px}
-td{padding:6px;border-bottom:1px solid #e5e7eb;vertical-align:top}
-td:nth-child(3){width:180px;max-width:180px}
-.img-box{width:160px;height:160px;border:1px dashed #aaa;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff}
-.img-box img{width:100%;height:100%;object-fit:contain;display:none}
-textarea{min-height:70px;resize:none;overflow:hidden}
-.sub-row td{background:#f9fafb;padding:12px}
-.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.btn{padding:10px 22px;border-radius:12px;font-weight:600;cursor:pointer;border:none}
-.btn.add{margin-top:14px;background:#e6e8ec}
-.btn-del{background:#fee2e2;border:none;border-radius:8px;padding:6px 10px;cursor:pointer}
-.actions{margin-top:32px;display:flex;justify-content:flex-end}
-@media print{
-  button,.btn-del{display:none!important}
-  body{margin:0}
-  .img-box{width:200px;height:200px}
+/* ==============================
+   TABLE STABILITY FIX (FINAL)
+   ============================== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+th, td {
+  vertical-align: top;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+th {
+  white-space: nowrap;
+}
+
+table input,
+table textarea,
+table select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+th.img-col,
+td.img-col {
+  width: 160px;
+  min-width: 160px;
+  text-align: center;
+}
+
+.img-box{
+  width:140px;
+  height:140px;
+  border:1px dashed #999;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  background:#fafafa;
+  margin: 0 auto;
+}
+
+.img-box img{
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+}
+
+.img-box input[type="file"]{
+  position:absolute;
+  inset:0;
+  opacity:0;
+  cursor:pointer;
+}
+
+@media print {
+  table {
+    table-layout: fixed;
+  }
 }
