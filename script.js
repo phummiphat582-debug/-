@@ -112,25 +112,19 @@ function copyPrevMonth(){
 
 addRow();
 
-function openCopyModal(){
+function copyWithPrompt(){
   if(!monthInput.value)
     return alert('กรุณาเลือกเดือนปลายทางก่อน');
-  document.getElementById('copyModal').style.display='flex';
-}
 
-function closeCopyModal(){
-  document.getElementById('copyModal').style.display='none';
-}
+  const fromMonth=prompt('กรอกเดือนต้นทาง (YYYY-MM)');
+  if(!fromMonth) return;
 
-function confirmCopy(){
-  const fromMonth=document.getElementById('copyMonth').value;
-  const toMonth=monthInput.value;
-  if(!fromMonth) return alert('กรุณาเลือกเดือนต้นทาง');
-  if(fromMonth===toMonth)
+  if(fromMonth===monthInput.value)
     return alert('ไม่สามารถคัดลอกเดือนเดียวกันได้');
+
   const raw=localStorage.getItem('PO_'+fromMonth);
   if(!raw) return alert('ไม่พบข้อมูลเดือนที่เลือก');
-  localStorage.setItem('PO_'+toMonth,raw);
+
+  localStorage.setItem('PO_'+monthInput.value,raw);
   loadMonth();
-  closeCopyModal();
 }
