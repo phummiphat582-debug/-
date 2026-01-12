@@ -22,7 +22,7 @@ function addRow(){
     <td><input type="number" class="price" oninput="calc(this)"></td>
     <td class="sum">0.00</td>
     <td><input></td>
-    <td><button class="btn-del" onclick="deleteRow(this)">🗑</button></td>
+    <td><button class="btn-del" onclick="deleteRow(this)"><span class="trash">🗑</span></button></td>
   `;
 
   const sub=document.createElement('tr');
@@ -44,9 +44,7 @@ function deleteRow(btn){
   const tr=btn.closest('tr');
   tr.nextElementSibling.remove();
   tr.remove();
-  renumber();
-  recalcGrand();
-  saveMonth();
+  renumber(); recalcGrand(); saveMonth();
 }
 
 function previewImage(input){
@@ -99,32 +97,27 @@ function loadMonth(){
   recalcGrand();
 }
 
-function copyPrevMonth(){
-  if(!monthInput.value) return alert('กรุณาเลือกเดือน');
-  const d=new Date(monthInput.value+'-01');
-  d.setMonth(d.getMonth()-1);
-  const prev=d.toISOString().slice(0,7);
-  const raw=localStorage.getItem('PO_'+prev);
-  if(!raw) return alert('ไม่พบข้อมูลเดือนก่อน');
-  localStorage.setItem('PO_'+monthInput.value,raw);
-  loadMonth();
+function copyWithPrompt(){
+  document.getElementById('copyModal').style.display='flex';
+  document.getElementById('copyTo').value=monthInput.value;
 }
+
+function closeCopy(){
+  document.getElementById('copyModal').style.display='none';
+}
+
+function confirmCopy(){
+  const from=document.getElementById('copyFrom').value;
+  const to=document.getElementById('copyTo').value;
+  const f=new Date(from+'-01'); const t=new Date(to+'-01');
+  f.setMonth(f.getMonth()+1);
+  if(f.getTime()!==t.getTime()) return alert('ต้องเป็นเดือนก่อนหน้าเท่านั้น');
+  const raw=localStorage.getItem('PO_'+from);
+  if(!raw) return alert('ไม่พบข้อมูลเดือนต้นทาง');
+  localStorage.setItem('PO_'+to,raw);
+  closeCopy(); loadMonth();
+}
+
+function printPDF(){window.print();}
 
 addRow();
-
-function copyWithPrompt(){
-  if(!monthInput.value)
-    return alert('กรุณาเลือกเดือนปลายทางก่อน');
-
-  const fromMonth=prompt('กรอกเดือนต้นทาง (YYYY-MM)');
-  if(!fromMonth) return;
-
-  if(fromMonth===monthInput.value)
-    return alert('ไม่สามารถคัดลอกเดือนเดียวกันได้');
-
-  const raw=localStorage.getItem('PO_'+fromMonth);
-  if(!raw) return alert('ไม่พบข้อมูลเดือนที่เลือก');
-
-  localStorage.setItem('PO_'+monthInput.value,raw);
-  loadMonth();
-}
