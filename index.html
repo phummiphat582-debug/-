@@ -28,25 +28,33 @@
     <table>
       <thead>
         <tr>
-          <th>ลำดับ</th><th>รายละเอียดสินค้า</th><th>รูป</th>
-          <th>หน่วย</th><th>สต็อก</th><th>คงเหลือ</th>
-          <th>ซื้อเพิ่ม</th><th>ราคา/หน่วย</th>
-          <th>ยอดรวม</th><th>ตัวแทนจำหน่าย</th><th>ลบ</th>
+          <th>ลำดับ</th>
+          <th>รายละเอียดสินค้า</th>
+          <th>รูป</th>
+          <th>หน่วย</th>
+          <th>สต็อก</th>
+          <th>คงเหลือ</th>
+          <th>ซื้อเพิ่ม</th>
+          <th>ราคา/หน่วย</th>
+          <th>ยอดรวม</th>
+          <th>ตัวแทนจำหน่าย</th>
+          <th>ลบ</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
     <button class="btn add" onclick="addRow()">+ เพิ่มรายการ</button>
     <button class="btn add" onclick="copyWithPrompt()">📋 คัดลอก</button>
-    <button class="btn add" onclick="printPDF()">🖨 พิมพ์ / เซฟ PDF</button>
   </div>
 
-  <div class="actions">
-    <strong>รวมทั้งสิ้น <span id="grand">0.00</span> บาท</strong>
+  <div class="actions total-bar">
+    <div class="total-text">
+      รวมทั้งสิ้น <span id="grand">0.00</span> บาท
+    </div>
+    <button class="btn-print" onclick="printPDF()">🖨 พิมพ์ / Save as PDF</button>
   </div>
 </div>
 
-<!-- COPY MODAL -->
 <div class="modal" id="copyModal">
   <div class="modal-box">
     <h3>คัดลอกรายการ</h3>
