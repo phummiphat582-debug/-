@@ -7,7 +7,7 @@
 </head>
 <body>
 
-<div class="page">
+<div class="page" id="pdf-area">
   <div class="header">
     <div class="header-left">
       <h1>ใบสั่งซื้อสินค้า</h1>
@@ -16,7 +16,7 @@
     <div class="header-right">
       <div>
         <label>เดือน</label>
-        <input type="month">
+        <input type="month" id="monthPicker">
       </div>
       <div>
         <label>แผนก</label>
@@ -39,21 +39,19 @@
           <th>ราคา/หน่วย</th>
           <th>ยอดรวม</th>
           <th>ตัวแทนจำหน่าย</th>
+          <th></th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
     <button class="btn add" onclick="addRow()">+ เพิ่มรายการ</button>
-  </div>
-
-  <div class="bottom total-only">
-    <div class="total-box">
-      รวมทั้งสิ้น<br>
-      <strong><span id="grand">0.00</span> บาท</strong>
-    </div>
+    <button class="btn add" onclick="copyFromMonth()">📋 คัดลอก</button>
   </div>
 
   <div class="actions">
+    <div style="margin-right:auto;font-weight:600">
+      รวมทั้งสิ้น <span id="grand">0.00</span> บาท
+    </div>
     <button class="btn primary" onclick="window.print()">พิมพ์ / Save as PDF</button>
   </div>
 </div>
