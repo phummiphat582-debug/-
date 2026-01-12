@@ -5,8 +5,8 @@ monthInput.addEventListener('change',loadMonth);
 function addRow(){
   const tbody=document.getElementById('tbody');
   const i=tbody.children.length/2+1;
-  const tr=document.createElement('tr');
-  tr.innerHTML=`
+  const main=document.createElement('tr');
+  main.innerHTML=`
     <td class="no">${i}</td>
     <td><textarea></textarea></td>
     <td><div class="img-box"></div></td>
@@ -17,7 +17,7 @@ function addRow(){
     <td><input type="number" class="price" oninput="calc(this)"></td>
     <td class="sum">0.00</td>
     <td><input></td>
-    <td><button class="trash" onclick="askDelete(this)">🗑</button></td>
+    <td><button class="btn-del" onclick="askDelete(this)">🗑</button></td>
   `;
   const sub=document.createElement('tr');
   sub.className='sub-row';
@@ -27,7 +27,7 @@ function addRow(){
       <div><label>ใช้งานที่</label><textarea></textarea></div>
     </div>
   </td>`;
-  tbody.append(tr,sub);
+  tbody.append(main,sub);
   saveMonth();
 }
 
