@@ -8,12 +8,12 @@
 </head>
 <body>
 <div class="page">
-  <div class="header">
-    <div class="header-left">
+  <header class="header">
+    <div>
       <h1>ใบสั่งซื้อสินค้า</h1>
       <h2>THE SCENERY VINTAGE FARM</h2>
     </div>
-    <div class="header-right">
+    <div class="filters">
       <div>
         <label>เดือน</label>
         <input type="month" id="monthPicker">
@@ -23,43 +23,46 @@
         <input type="text">
       </div>
     </div>
-  </div>
+  </header>
 
-  <div class="card">
+  <section class="card">
     <table>
       <thead>
         <tr>
           <th>ลำดับ</th><th>รายละเอียดสินค้า</th><th>รูป</th>
           <th>หน่วย</th><th>สต็อก</th><th>คงเหลือ</th>
           <th>ซื้อเพิ่ม</th><th>ราคา/หน่วย</th>
-          <th>ยอดรวม</th><th>ตัวแทนจำหน่าย</th><th>ลบ</th>
+          <th>ยอดรวม</th><th>ตัวแทนจำหน่าย</th><th></th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
-    <button class="btn add" onclick="addRow()">+ เพิ่มรายการ</button>
-    <button class="btn add" onclick="copyWithPrompt()">📋 คัดลอก</button>
-  </div>
 
-  <div class="summary-zone">
-    <div class="summary-total">
+    <div class="table-actions">
+      <button class="btn secondary" onclick="addRow()">＋ เพิ่มรายการ</button>
+      <button class="btn secondary" onclick="copyWithPrompt()">📋 คัดลอก</button>
+    </div>
+  </section>
+
+  <section class="summary-bar">
+    <div class="summary-left">
       รวมทั้งสิ้น <span id="grand">0.00</span> บาท
     </div>
-    <button class="summary-print" onclick="printPDF()">🖨 พิมพ์ / Save PDF</button>
-  </div>
+    <button class="btn primary" onclick="printPDF()">🖨 พิมพ์ / Save PDF</button>
+  </section>
 </div>
 
 <!-- COPY MODAL -->
 <div class="modal" id="copyModal">
   <div class="modal-box">
-    <h3>📋 คัดลอกรายการ</h3>
+    <h3>คัดลอกรายการ</h3>
     <label>จากเดือน</label>
     <input type="month" id="copyFrom">
     <label>ไปเดือน</label>
     <input type="month" id="copyTo">
     <div class="modal-actions">
       <button class="btn ghost" onclick="closeCopy()">ยกเลิก</button>
-      <button class="btn add" onclick="confirmCopy()">คัดลอก</button>
+      <button class="btn primary" onclick="confirmCopy()">คัดลอก</button>
     </div>
   </div>
 </div>
@@ -67,12 +70,12 @@
 <!-- DELETE MODAL -->
 <div class="modal" id="deleteModal">
   <div class="modal-box danger">
-    <div class="trash-icon">🗑</div>
-    <h3>ยืนยันการลบ</h3>
-    <p>คุณต้องการลบรายการนี้ใช่หรือไม่</p>
+    <div class="icon-danger">🗑</div>
+    <h3>ยืนยันการลบรายการ</h3>
+    <p>รายการนี้จะถูกลบและไม่สามารถกู้คืนได้</p>
     <div class="modal-actions">
       <button class="btn ghost" onclick="closeDelete()">ยกเลิก</button>
-      <button class="btn danger-btn" onclick="confirmDelete()">ลบรายการ</button>
+      <button class="btn danger" onclick="confirmDelete()">ลบ</button>
     </div>
   </div>
 </div>
