@@ -41,7 +41,7 @@ function addRow(){
   saveMonth();
 }
 
-/* DELETE (modal) */
+/* DELETE MODAL */
 function requestDelete(btn){
   deleteTarget = btn.closest('tr');
   document.getElementById('deleteModal').classList.add('show');
@@ -110,7 +110,7 @@ function loadMonth(){
   recalcGrand();
 }
 
-/* COPY MODAL (เดิม) */
+/* COPY MODAL */
 function openCopyModal(){
   document.getElementById('copyModal').classList.add('show');
   document.getElementById('toMonth').value = monthInput.value;
