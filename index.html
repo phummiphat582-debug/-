@@ -3,10 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
-
-<!-- FIX base path for GitHub Pages /-/ -->
 <base href="/-/">
-
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -51,24 +48,40 @@
     <button class="btn add" onclick="copyWithPrompt()">📋 คัดลอก</button>
   </div>
 
-  <div class="actions total-bar">
-    <div class="total-text">
+  <div class="summary-wrap">
+    <div class="summary-total">
       รวมทั้งสิ้น <span id="grand">0.00</span> บาท
     </div>
-    <button class="btn-print" onclick="printPDF()">🖨 พิมพ์ / Save as PDF</button>
+    <div class="summary-action">
+      <button class="btn-print" onclick="printPDF()">🖨 พิมพ์ / Save PDF</button>
+    </div>
   </div>
 </div>
 
+<!-- COPY MODAL -->
 <div class="modal" id="copyModal">
-  <div class="modal-box">
-    <h3>คัดลอกรายการ</h3>
+  <div class="modal-box animate">
+    <h3>📋 คัดลอกรายการ</h3>
     <label>จากเดือน</label>
     <input type="month" id="copyFrom">
     <label>ไปเดือน</label>
     <input type="month" id="copyTo">
     <div class="modal-actions">
-      <button class="btn" onclick="closeCopy()">ยกเลิก</button>
+      <button class="btn ghost" onclick="closeCopy()">ยกเลิก</button>
       <button class="btn add" onclick="confirmCopy()">คัดลอก</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal" id="deleteModal">
+  <div class="modal-box animate">
+    <div class="trash-big">🗑</div>
+    <h3>ยืนยันการลบ</h3>
+    <p>คุณต้องการลบรายการนี้ใช่หรือไม่</p>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeDelete()">ยกเลิก</button>
+      <button class="btn danger" onclick="confirmDelete()">ลบรายการ</button>
     </div>
   </div>
 </div>
