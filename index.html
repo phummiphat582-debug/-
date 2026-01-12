@@ -2,34 +2,67 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ใบขออนุมัติสั่งซื้อ</title>
+<title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h2>ใบขออนุมัติสั่งซื้อ (PO)</h2>
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <h1>ใบสั่งซื้อสินค้า</h1>
+      <h2>THE SCENERY VINTAGE FARM</h2>
+    </div>
+    <div class="header-right">
+      <div>
+        <label>เดือน</label>
+        <input type="month" id="monthPicker">
+      </div>
+      <div>
+        <label>แผนก</label>
+        <input type="text">
+      </div>
+    </div>
+  </div>
 
-<label>เดือน:
-<input type="month" id="month"></label>
-<button onclick="copyPrev()">คัดลอกเดือนก่อน</button>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>ลำดับ</th>
+          <th>รายละเอียดสินค้า</th>
+          <th>รูป</th>
+          <th>หน่วย</th>
+          <th>สต็อก</th>
+          <th>คงเหลือ</th>
+          <th>ซื้อเพิ่ม</th>
+          <th>ราคา/หน่วย</th>
+          <th>ยอดรวม</th>
+          <th>ตัวแทนจำหน่าย</th>
+          <th>ลบ</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <button class="btn add" onclick="addRow()">+ เพิ่มรายการ</button>
+    <button class="btn add" onclick="openCopyModal()">📋 คัดลอก</button>
+  </div>
 
-<table>
-<thead>
-<tr>
-<th>ลำดับ</th>
-<th>รายการ</th>
-<th>จำนวน</th>
-<th>ราคา</th>
-<th>รวม</th>
-<th></th>
-</tr>
-</thead>
-<tbody id="tbody"></tbody>
-</table>
-
-<button onclick="addRow()">+ เพิ่มรายการ</button>
-<h3>รวมทั้งสิ้น: <span id="grand">0</span> บาท</h3>
-
+  <div class="actions">
+    <strong>รวมทั้งสิ้น <span id="grand">0.00</span> บาท</strong>
+  </div>
+</div>
 <script src="script.js"></script>
+
+<div id="copyModal" class="modal">
+  <div class="modal-box">
+    <h3>คัดลอกข้อมูลจากเดือน</h3>
+    <input type="month" id="copyMonth">
+    <div class="modal-actions">
+      <button onclick="closeCopyModal()">ยกเลิก</button>
+      <button onclick="confirmCopy()">ตกลง</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
