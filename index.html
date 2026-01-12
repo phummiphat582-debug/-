@@ -4,25 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PO Monthly App</title>
-
-<style>
-body{font-family:sans-serif;background:#f4f4f5;padding:20px}
-h2{margin-bottom:10px}
-.top{display:flex;gap:10px;flex-wrap:wrap}
-input,button{padding:8px;border-radius:10px;border:1px solid #ccc}
-button{cursor:pointer}
-table{width:100%;border-collapse:collapse;margin-top:15px;background:#fff;border-radius:12px;overflow:hidden}
-th,td{padding:8px;border-bottom:1px solid #eee;text-align:center}
-.btn{background:#e5e7eb}
-.btn.primary{background:#111;color:#fff}
-.btn.danger{background:#dc2626;color:#fff}
-.total{font-weight:bold}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center}
-.modal.show{display:flex}
-.modal-box{background:#fff;padding:24px;border-radius:18px;min-width:320px;animation:pop .25s}
-.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
-@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -35,13 +17,13 @@ th,td{padding:8px;border-bottom:1px solid #eee;text-align:center}
   <button class="btn" onclick="openCopy()">📋 คัดลอก</button>
 </div>
 
-<table id="table">
+<table>
 <thead>
 <tr>
 <th>#</th><th>รายการ</th><th>จำนวน</th><th>ราคา</th><th>รวม</th><th></th>
 </tr>
 </thead>
-<tbody></tbody>
+<tbody id="tbody"></tbody>
 <tfoot>
 <tr class="total">
 <td colspan="4">รวมทั้งหมด</td>
@@ -75,81 +57,6 @@ th,td{padding:8px;border-bottom:1px solid #eee;text-align:center}
   </div>
 </div>
 
-<script>
-const monthInput=document.getElementById('month');
-const tbody=document.querySelector('tbody');
-let delTarget=null;
-
-monthInput.onchange=loadMonth;
-
-function addRow(){
-  const r=document.createElement('tr');
-  r.innerHTML=`
-  <td></td>
-  <td><input></td>
-  <td><input type="number" value="1"></td>
-  <td><input type="number" value="0"></td>
-  <td class="sum">0</td>
-  <td><button onclick="askDelete(this)">🗑</button></td>`;
-  tbody.appendChild(r);
-  r.querySelectorAll('input').forEach(i=>i.oninput=calc);
-  renumber(); calc();
-}
-
-function calc(){
-  let g=0;
-  tbody.querySelectorAll('tr').forEach(r=>{
-    const q=r.children[2].firstChild.value||0;
-    const p=r.children[3].firstChild.value||0;
-    const s=q*p;
-    r.querySelector('.sum').innerText=s;
-    g+=s;
-  });
-  grand.innerText=g;
-  saveMonth();
-}
-
-function renumber(){
-  [...tbody.children].forEach((r,i)=>r.firstChild.innerText=i+1);
-}
-
-function saveMonth(){
-  if(!monthInput.value) return;
-  localStorage.setItem('PO_'+monthInput.value,tbody.innerHTML);
-}
-
-function loadMonth(){
-  tbody.innerHTML=localStorage.getItem('PO_'+monthInput.value)||'';
-  tbody.querySelectorAll('input').forEach(i=>i.oninput=calc);
-  renumber(); calc();
-}
-
-function openCopy(){
-  if(!monthInput.value) return alert('เลือกเดือนก่อน');
-  copyModal.classList.add('show');
-}
-
-function closeCopy(){copyModal.classList.remove('show')}
-
-function confirmCopy(){
-  const f=fromMonth.value;
-  if(!f) return alert('เลือกเดือนต้นทาง');
-  const d=localStorage.getItem('PO_'+f);
-  if(!d) return alert('ไม่มีข้อมูล');
-  localStorage.setItem('PO_'+monthInput.value,d);
-  closeCopy(); loadMonth();
-}
-
-function askDelete(btn){
-  delTarget=btn.closest('tr');
-  delModal.classList.add('show');
-}
-function closeDel(){delModal.classList.remove('show')}
-function doDelete(){
-  delTarget.remove();
-  closeDel(); renumber(); calc();
-}
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
