@@ -44,7 +44,7 @@
       <tbody id="tbody"></tbody>
     </table>
     <button class="btn add" onclick="addRow()">+ เพิ่มรายการ</button>
-    <button class="btn add" onclick="openCopyModal()">📋 คัดลอก</button>
+    <button class="btn add" onclick="copyWithPrompt()">📋 คัดลอก</button>
   </div>
 
   <div class="actions">
@@ -52,17 +52,5 @@
   </div>
 </div>
 <script src="script.js"></script>
-
-<div id="copyModal" class="modal">
-  <div class="modal-box">
-    <h3>คัดลอกข้อมูลจากเดือน</h3>
-    <input type="month" id="copyMonth">
-    <div class="modal-actions">
-      <button onclick="closeCopyModal()">ยกเลิก</button>
-      <button onclick="confirmCopy()">ตกลง</button>
-    </div>
-  </div>
-</div>
-
 </body>
 </html>
