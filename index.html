@@ -60,7 +60,22 @@
   </div>
 </div>
 
-<!-- DELETE CONFIRM MODAL -->
+<!-- COPY MODAL (เดิม) -->
+<div class="modal" id="copyModal">
+  <div class="modal-box">
+    <h3>คัดลอกข้อมูล</h3>
+    <label>เดือนต้นทาง</label>
+    <input type="month" id="fromMonth">
+    <label style="margin-top:10px">เดือนปลายทาง</label>
+    <input type="month" id="toMonth">
+    <div class="modal-actions">
+      <button class="btn" onclick="closeCopyModal()">ยกเลิก</button>
+      <button class="btn primary" onclick="confirmCopy()">คัดลอก</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL (ใหม่) -->
 <div class="modal" id="deleteModal">
   <div class="modal-box">
     <h3 style="color:#dc2626">ยืนยันการลบ</h3>
