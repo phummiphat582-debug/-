@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#2f2f2f">
+<link rel="icon" href="icon-192.png">
+
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -61,7 +66,6 @@
   </div>
 </div>
 
-<!-- Modal (hidden by default) -->
 <div id="deleteModal" class="modal">
   <div class="modal-box">
     <h3>ยืนยันการลบ</h3>
@@ -74,5 +78,12 @@
 </div>
 
 <script src="script.js"></script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
+</script>
+
 </body>
 </html>
