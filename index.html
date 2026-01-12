@@ -29,17 +29,10 @@
     <table>
       <thead>
         <tr>
-          <th>ลำดับ</th>
-          <th>รายละเอียดสินค้า</th>
-          <th>รูป</th>
-          <th>หน่วย</th>
-          <th>สต็อก</th>
-          <th>คงเหลือ</th>
-          <th>ซื้อเพิ่ม</th>
-          <th>ราคา/หน่วย</th>
-          <th>ยอดรวม</th>
-          <th>ตัวแทนจำหน่าย</th>
-          <th>ลบ</th>
+          <th>ลำดับ</th><th>รายละเอียดสินค้า</th><th>รูป</th>
+          <th>หน่วย</th><th>สต็อก</th><th>คงเหลือ</th>
+          <th>ซื้อเพิ่ม</th><th>ราคา/หน่วย</th>
+          <th>ยอดรวม</th><th>ตัวแทนจำหน่าย</th><th>ลบ</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
@@ -48,19 +41,17 @@
     <button class="btn add" onclick="copyWithPrompt()">📋 คัดลอก</button>
   </div>
 
-  <div class="summary-wrap">
+  <div class="summary-zone">
     <div class="summary-total">
       รวมทั้งสิ้น <span id="grand">0.00</span> บาท
     </div>
-    <div class="summary-action">
-      <button class="btn-print" onclick="printPDF()">🖨 พิมพ์ / Save PDF</button>
-    </div>
+    <button class="summary-print" onclick="printPDF()">🖨 พิมพ์ / Save PDF</button>
   </div>
 </div>
 
 <!-- COPY MODAL -->
 <div class="modal" id="copyModal">
-  <div class="modal-box animate">
+  <div class="modal-box">
     <h3>📋 คัดลอกรายการ</h3>
     <label>จากเดือน</label>
     <input type="month" id="copyFrom">
@@ -75,13 +66,13 @@
 
 <!-- DELETE MODAL -->
 <div class="modal" id="deleteModal">
-  <div class="modal-box animate">
-    <div class="trash-big">🗑</div>
+  <div class="modal-box danger">
+    <div class="trash-icon">🗑</div>
     <h3>ยืนยันการลบ</h3>
     <p>คุณต้องการลบรายการนี้ใช่หรือไม่</p>
     <div class="modal-actions">
       <button class="btn ghost" onclick="closeDelete()">ยกเลิก</button>
-      <button class="btn danger" onclick="confirmDelete()">ลบรายการ</button>
+      <button class="btn danger-btn" onclick="confirmDelete()">ลบรายการ</button>
     </div>
   </div>
 </div>
