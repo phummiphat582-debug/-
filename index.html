@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="style.css">
 
 <!-- PWA -->
-<link rel="manifest" href="/-/manifest.json">
+<link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#111111">
 </head>
 <body>
@@ -75,7 +75,7 @@
   </div>
 </div>
 
-<!-- DELETE CONFIRM MODAL (ใหม่) -->
+<!-- DELETE CONFIRM MODAL -->
 <div class="modal" id="deleteModal">
   <div class="modal-box">
     <h3 style="color:#dc2626">ยืนยันการลบ</h3>
@@ -92,7 +92,7 @@
 <!-- Service Worker -->
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/-/service-worker.js');
+  navigator.serviceWorker.register('./service-worker.js');
 }
 </script>
 </body>
