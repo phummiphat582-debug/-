@@ -10,15 +10,70 @@ th{background:#2f2f2f;color:#fff;padding:10px}
 td{padding:6px;border-bottom:1px solid #e5e7eb}
 .btn{padding:10px 22px;border-radius:12px;font-weight:600;border:none;cursor:pointer}
 .btn.add{background:#e6e8ec}
-.btn-print{background:#111;color:#fff}
-.summary-wrap{margin-top:32px;display:flex;justify-content:flex-end;gap:16px}
-.summary-total{background:#111;color:#fff;padding:16px 24px;border-radius:14px;font-size:18px;font-weight:700}
-.summary-action{}
-.btn-del{background:#fee2e2;border:none;border-radius:50%;padding:6px 10px;cursor:pointer}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:1000}
-.modal-box{background:#fff;padding:28px;border-radius:18px;width:320px;text-align:center}
-.animate{animation:pop .25s ease-out}
-@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
-.trash-big{font-size:48px;color:#dc2626;margin-bottom:12px}
-.btn.danger{background:#dc2626;color:#fff}
+.summary-zone{
+  margin-top:32px;
+  display:flex;
+  justify-content:flex-end;
+  gap:16px;
+}
+.summary-total{
+  background:#111;
+  color:#fff;
+  padding:18px 26px;
+  border-radius:16px;
+  font-size:18px;
+  font-weight:700;
+}
+.summary-print{
+  background:#fff;
+  border:2px solid #111;
+  color:#111;
+  padding:16px 24px;
+  border-radius:16px;
+  font-weight:700;
+  cursor:pointer;
+}
+.summary-print:hover{background:#111;color:#fff}
+.trash-btn{
+  background:#fee2e2;
+  border:none;
+  border-radius:50%;
+  padding:6px 10px;
+  cursor:pointer;
+}
+.trash-btn:hover{background:#fecaca}
+.modal{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(4px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:1000;
+}
+.modal-box{
+  background:#fff;
+  padding:28px;
+  border-radius:20px;
+  width:340px;
+  text-align:center;
+  animation:pop .25s ease-out;
+}
+.modal-box.danger{border-top:6px solid #dc2626}
+@keyframes pop{
+  from{transform:scale(.85);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+.trash-icon{font-size:52px;color:#dc2626;margin-bottom:10px}
+.modal-actions{
+  margin-top:20px;
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+}
 .btn.ghost{background:#e5e7eb}
+.btn.danger-btn{background:#dc2626;color:#fff}
+@media print{
+  button{display:none!important}
+  .summary-zone{display:none!important}
+}
