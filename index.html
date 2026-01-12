@@ -3,12 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
+
+<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#111111">
+
+<!-- GitHub Pages base path -->
 <base href="/-/">
+
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <div class="page">
   <div class="header">
     <div class="header-left">
@@ -16,14 +22,8 @@
       <h2>THE SCENERY VINTAGE FARM</h2>
     </div>
     <div class="header-right">
-      <div>
-        <label>เดือน</label>
-        <input type="month" id="monthPicker">
-      </div>
-      <div>
-        <label>แผนก</label>
-        <input type="text">
-      </div>
+      <label>เดือน <input type="month" id="monthPicker"></label>
+      <label>แผนก <input type="text"></label>
     </div>
   </div>
 
@@ -31,29 +31,22 @@
     <table>
       <thead>
         <tr>
-          <th>ลำดับ</th>
-          <th>รายละเอียดสินค้า</th>
-          <th>รูป</th>
-          <th>หน่วย</th>
-          <th>สต็อก</th>
-          <th>คงเหลือ</th>
-          <th>ซื้อเพิ่ม</th>
-          <th>ราคา/หน่วย</th>
-          <th>ยอดรวม</th>
-          <th>ตัวแทนจำหน่าย</th>
-          <th>ลบ</th>
+          <th>ลำดับ</th><th>รายละเอียดสินค้า</th><th>รูป</th>
+          <th>หน่วย</th><th>สต็อก</th><th>คงเหลือ</th>
+          <th>ซื้อเพิ่ม</th><th>ราคา/หน่วย</th>
+          <th>ยอดรวม</th><th>ตัวแทนจำหน่าย</th><th>ลบ</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
 
-    <button class="btn add" onclick="addRow()">+ เพิ่มรายการ</button>
-    <button class="btn add" onclick="copyWithPrompt()">📋 คัดลอก</button>
+    <button onclick="addRow()">+ เพิ่มรายการ</button>
+    <button onclick="copyWithPrompt()">📋 คัดลอก</button>
   </div>
 
   <div class="actions">
     <strong>รวมทั้งสิ้น <span id="grand">0.00</span> บาท</strong>
-    <button class="btn-print" onclick="printPDF()">🖨 พิมพ์ / Save PDF</button>
+    <button onclick="printPDF()">🖨 พิมพ์ / Save PDF</button>
   </div>
 </div>
 
