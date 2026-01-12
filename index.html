@@ -3,11 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
-
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#2f2f2f">
-<link rel="icon" href="icon-192.png">
-
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,11 +16,11 @@
     <div class="header-right">
       <div>
         <label>เดือน</label>
-        <input type="month" id="month">
+        <input type="month">
       </div>
       <div>
         <label>แผนก</label>
-        <input type="text" id="dept">
+        <input type="text">
       </div>
     </div>
   </div>
@@ -36,7 +31,7 @@
         <tr>
           <th>ลำดับ</th>
           <th>รายละเอียดสินค้า</th>
-          <th class="img-col">รูป</th>
+          <th>รูป</th>
           <th>หน่วย</th>
           <th>สต็อก</th>
           <th>คงเหลือ</th>
@@ -44,12 +39,11 @@
           <th>ราคา/หน่วย</th>
           <th>ยอดรวม</th>
           <th>ตัวแทนจำหน่าย</th>
-          <th class="delete-col no-print">ลบ</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
-    <button class="btn add no-print" onclick="addRow()">+ เพิ่มรายการ</button>
+    <button class="btn add" onclick="addRow()">+ เพิ่มรายการ</button>
   </div>
 
   <div class="bottom total-only">
@@ -59,31 +53,11 @@
     </div>
   </div>
 
-  <div class="actions no-print">
-    <button class="btn secondary" onclick="saveData()">💾 บันทึก</button>
-    <button class="btn secondary" onclick="loadData()">🔄 โหลดข้อมูล</button>
-    <button class="btn primary" onclick="window.print()">🖨 พิมพ์ / Save PDF</button>
-  </div>
-</div>
-
-<div id="deleteModal" class="modal">
-  <div class="modal-box">
-    <h3>ยืนยันการลบ</h3>
-    <p>คุณต้องการลบรายการนี้ใช่หรือไม่?</p>
-    <div class="modal-actions">
-      <button class="btn cancel" onclick="closeModal()">ยกเลิก</button>
-      <button class="btn danger" onclick="confirmDelete()">ลบ</button>
-    </div>
+  <div class="actions">
+    <button class="btn primary" onclick="window.print()">พิมพ์ / Save as PDF</button>
   </div>
 </div>
 
 <script src="script.js"></script>
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js');
-}
-</script>
-
 </body>
 </html>
