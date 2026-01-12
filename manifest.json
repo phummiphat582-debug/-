@@ -1,11 +1,10 @@
 {
-  "name": "Purchase Order App",
-  "short_name": "PO App",
-  "start_url": "./",
-  "scope": "./",
+  "name": "ใบสั่งซื้อสินค้า",
+  "short_name": "PO",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2f2f2f",
+  "theme_color": "#111111",
   "icons": [
     {
       "src": "icon-192.png",
