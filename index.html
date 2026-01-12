@@ -4,14 +4,9 @@
 <meta charset="UTF-8">
 <title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
 <link rel="stylesheet" href="style.css">
-
-<!-- PWA -->
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#111111">
 </head>
 <body>
-
-<div class="page" id="pdf-area">
+<div class="page">
   <div class="header">
     <div class="header-left">
       <h1>ใบสั่งซื้อสินค้า</h1>
@@ -43,57 +38,19 @@
           <th>ราคา/หน่วย</th>
           <th>ยอดรวม</th>
           <th>ตัวแทนจำหน่าย</th>
-          <th></th>
+          <th>ลบ</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
     <button class="btn add" onclick="addRow()">+ เพิ่มรายการ</button>
-    <button class="btn add" onclick="openCopyModal()">📋 คัดลอก</button>
+    <button class="btn add" onclick="copyPrevMonth()">📋 คัดลอกเดือนก่อน</button>
   </div>
 
   <div class="actions">
-    <div style="margin-right:auto;font-weight:600">
-      รวมทั้งสิ้น <span id="grand">0.00</span> บาท
-    </div>
-    <button class="btn primary" onclick="window.print()">พิมพ์ / Save as PDF</button>
+    <strong>รวมทั้งสิ้น <span id="grand">0.00</span> บาท</strong>
   </div>
 </div>
-
-<!-- COPY MODAL (เดิม) -->
-<div class="modal" id="copyModal">
-  <div class="modal-box">
-    <h3>คัดลอกข้อมูล</h3>
-    <label>เดือนต้นทาง</label>
-    <input type="month" id="fromMonth">
-    <label style="margin-top:10px">เดือนปลายทาง</label>
-    <input type="month" id="toMonth">
-    <div class="modal-actions">
-      <button class="btn" onclick="closeCopyModal()">ยกเลิก</button>
-      <button class="btn primary" onclick="confirmCopy()">คัดลอก</button>
-    </div>
-  </div>
-</div>
-
-<!-- DELETE CONFIRM MODAL -->
-<div class="modal" id="deleteModal">
-  <div class="modal-box">
-    <h3 style="color:#dc2626">ยืนยันการลบ</h3>
-    <p>ต้องการลบรายการนี้ใช่ไหม?</p>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeDeleteModal()">ยกเลิก</button>
-      <button class="btn primary" style="background:#dc2626" onclick="confirmDelete()">ลบ</button>
-    </div>
-  </div>
-</div>
-
 <script src="script.js"></script>
-
-<!-- Service Worker -->
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js');
-}
-</script>
 </body>
 </html>
