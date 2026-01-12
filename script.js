@@ -1,165 +1,87 @@
-const STORAGE_PREFIX = 'PO_DATA_PRINT_BIG_';
-let deleteTargetBtn = null;
+const tbody=document.getElementById('tbody');
+const monthInput=document.getElementById('month');
+const grand=document.getElementById('grand');
 
-function addRow(data = {}) {
-  const tbody = document.getElementById('tbody');
-  const index = tbody.children.length / 2 + 1;
+monthInput.value=new Date().toISOString().slice(0,7);
+loadMonth();
 
-  const main = document.createElement('tr');
-  main.innerHTML = `
-    <td>${index}</td>
-    <td><textarea>${data.desc || ''}</textarea></td>
-    <td class="img-col">
-      <div class="img-box">
-        <input type="file" accept="image/*">
-        <img style="display:none">
-      </div>
-    </td>
-    <td><input value="${data.unit || ''}"></td>
-    <td><input type="number" value="${data.stock || ''}"></td>
-    <td><input type="number" value="${data.remain || ''}"></td>
-    <td><input type="number" class="buy" value="${data.buy || ''}" oninput="calcRow(this)"></td>
-    <td><input type="number" class="price" value="${data.price || ''}" oninput="calcRow(this)"></td>
-    <td class="sum">0.00</td>
-    <td><input value="${data.vendor || ''}"></td>
-    <td class="delete-col no-print">
-      <button class="delete-btn" onclick="openModal(this)">🗑</button>
-    </td>
-  `;
+document.addEventListener('input',e=>{
+  if(e.target.closest('#tbody')){
+    saveMonth();
+    recalcGrand();
+  }
+});
 
-  const sub = document.createElement('tr');
-  sub.className = 'sub-row';
-  sub.innerHTML = `
-    <td colspan="11">
-      <div class="sub-grid">
-        <div><label>จุดประสงค์</label><textarea>${data.purpose || ''}</textarea></div>
-        <div><label>ใช้งานที่</label><textarea>${data.place || ''}</textarea></div>
-      </div>
-    </td>
-  `;
+function addRow(){
+  const i=document.querySelectorAll('.no').length+1;
+  const m=document.createElement('tr');
+  m.innerHTML=`<td class="no">${i}</td>
+  <td><textarea></textarea></td>
+  <td><input type="number" value="1"></td>
+  <td><input type="number" value="0"></td>
+  <td class="sum">0</td>
+  <td><button onclick="delRow(this)">🗑</button></td>`;
+  const s=document.createElement('tr');
+  s.className='sub-row';
+  s.innerHTML='<td></td><td colspan="5"><textarea placeholder="หมายเหตุ"></textarea></td>';
+  tbody.append(m,s);
+  saveMonth();
+}
 
-  tbody.appendChild(main);
-  tbody.appendChild(sub);
+function delRow(b){
+  const tr=b.closest('tr');
+  const sub=tr.nextSibling;
+  tr.remove(); sub.remove();
+  renumber(); saveMonth(); recalcGrand();
+}
 
-  const fileInput = main.querySelector('input[type=file]');
-  const img = main.querySelector('img');
+function renumber(){
+  document.querySelectorAll('.no').forEach((n,i)=>n.textContent=i+1);
+}
 
-  fileInput.addEventListener('change', () => {
-    const file = fileInput.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = e => {
-      img.src = e.target.result;
-      img.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
+function recalcGrand(){
+  let g=0;
+  tbody.querySelectorAll('tr').forEach(tr=>{
+    const q=tr.querySelector('input[type=number]');
+    if(!q)return;
+    const p=tr.querySelectorAll('input')[1];
+    const s=tr.querySelector('.sum');
+    const v=(+q.value||0)*(+p.value||0);
+    s.textContent=v;
+    g+=v;
   });
-
-  if (data.img) {
-    img.src = data.img;
-    img.style.display = 'block';
-  }
-
-  calcAll();
+  grand.textContent=g;
 }
 
-function openModal(btn) {
-  deleteTargetBtn = btn;
-  document.getElementById('deleteModal').classList.add('show');
-}
-
-function closeModal() {
-  deleteTargetBtn = null;
-  document.getElementById('deleteModal').classList.remove('show');
-}
-
-function confirmDelete() {
-  if (!deleteTargetBtn) return;
-  const main = deleteTargetBtn.closest('tr');
-  const sub = main.nextElementSibling;
-  if (sub && sub.classList.contains('sub-row')) sub.remove();
-  main.remove();
-  closeModal();
-  reindex();
-  calcAll();
-  saveData();
-}
-
-function reindex() {
-  const rows = document.querySelectorAll('#tbody tr');
-  let i = 1;
-  for (let r = 0; r < rows.length; r += 2) {
-    rows[r].children[0].innerText = i++;
-  }
-}
-
-function calcRow(el) {
-  const row = el.closest('tr');
-  const buy = row.querySelector('.buy').value || 0;
-  const price = row.querySelector('.price').value || 0;
-  row.querySelector('.sum').innerText = (buy * price).toFixed(2);
-  calcAll();
-}
-
-function calcAll() {
-  let total = 0;
-  document.querySelectorAll('.sum').forEach(s => {
-    total += parseFloat(s.innerText || 0);
+function saveMonth(){
+  const data=[];
+  tbody.querySelectorAll('tr').forEach((tr,i)=>{
+    if(i%2==0){
+      data.push({main:tr.outerHTML,sub:tr.nextSibling.outerHTML});
+    }
   });
-  document.getElementById('grand').innerText = total.toFixed(2);
+  localStorage.setItem('PO_'+monthInput.value,JSON.stringify(data));
 }
 
-function saveData() {
-  const month = document.getElementById('month').value;
-  if (!month) return;
-
-  const rows = [];
-  const trs = document.querySelectorAll('#tbody tr');
-  for (let i = 0; i < trs.length; i += 2) {
-    const m = trs[i], s = trs[i + 1];
-    rows.push({
-      desc: m.querySelector('textarea').value,
-      img: m.querySelector('img').src || '',
-      unit: m.querySelectorAll('input')[1].value,
-      stock: m.querySelectorAll('input')[2].value,
-      remain: m.querySelectorAll('input')[3].value,
-      buy: m.querySelector('.buy').value,
-      price: m.querySelector('.price').value,
-      vendor: m.querySelectorAll('input')[4].value,
-      purpose: s.querySelectorAll('textarea')[0].value,
-      place: s.querySelectorAll('textarea')[1].value
-    });
-  }
-
-  localStorage.setItem(
-    STORAGE_PREFIX + month,
-    JSON.stringify({
-      month,
-      dept: document.getElementById('dept').value,
-      rows
-    })
-  );
+function loadMonth(){
+  const raw=localStorage.getItem('PO_'+monthInput.value);
+  tbody.innerHTML='';
+  if(!raw){addRow();return;}
+  JSON.parse(raw).forEach(d=>{
+    tbody.insertAdjacentHTML('beforeend',d.main+d.sub);
+  });
+  renumber(); recalcGrand();
 }
 
-function loadData() {
-  const month = document.getElementById('month').value;
-  document.getElementById('tbody').innerHTML = '';
-  if (!month) {
-    addRow();
-    return;
+function copyPrev(){
+  const d=new Date(monthInput.value+'-01');
+  d.setMonth(d.getMonth()-1);
+  const k='PO_'+d.toISOString().slice(0,7);
+  const p=localStorage.getItem(k);
+  if(p){
+    localStorage.setItem('PO_'+monthInput.value,p);
+    loadMonth();
   }
-
-  const data = JSON.parse(localStorage.getItem(STORAGE_PREFIX + month));
-  if (!data) {
-    addRow();
-    return;
-  }
-
-  document.getElementById('dept').value = data.dept;
-  data.rows.forEach(r => addRow(r));
-  calcAll();
 }
 
-document.getElementById('month').addEventListener('change', loadData);
-
-addRow();
+monthInput.onchange=loadMonth;
