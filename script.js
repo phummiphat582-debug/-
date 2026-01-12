@@ -1,28 +1,30 @@
-const monthInput=document.getElementById('monthPicker');
-monthInput.addEventListener('change',loadMonth);
+const STORAGE_PREFIX='PO_DATA_PRINT_BIG_';
+let deleteTargetBtn=null;
 
-function addRow(){
+function addRow(data={}){
   const tbody=document.getElementById('tbody');
-  const i=tbody.children.length/2+1;
+  const index=tbody.children.length/2+1;
 
   const main=document.createElement('tr');
   main.innerHTML=`
-    <td class="no">${i}</td>
-    <td><textarea></textarea></td>
-    <td>
+    <td>${index}</td>
+    <td><textarea>${data.desc||''}</textarea></td>
+    <td class="img-col">
       <div class="img-box" onclick="this.querySelector('input').click()">
-        <input type="file" accept="image/*" onchange="previewImage(this)" hidden>
-        <img>
+        <input type="file" hidden>
+        <img src="${data.img||''}" style="${data.img?'display:block':''}">
       </div>
     </td>
-    <td><input></td>
-    <td><input type="number"></td>
-    <td><input type="number"></td>
-    <td><input type="number" class="buy" oninput="calc(this)"></td>
-    <td><input type="number" class="price" oninput="calc(this)"></td>
+    <td><input value="${data.unit||''}"></td>
+    <td><input type="number" value="${data.stock||''}"></td>
+    <td><input type="number" value="${data.remain||''}"></td>
+    <td><input type="number" class="buy" value="${data.buy||''}" oninput="calcRow(this)"></td>
+    <td><input type="number" class="price" value="${data.price||''}" oninput="calcRow(this)"></td>
     <td class="sum">0.00</td>
-    <td><input></td>
-    <td><button class="btn-del" onclick="deleteRow(this)">🗑</button></td>
+    <td><input value="${data.vendor||''}"></td>
+    <td class="delete-col no-print">
+      <button class="delete-btn" onclick="openModal(this)">🗑</button>
+    </td>
   `;
 
   const sub=document.createElement('tr');
@@ -30,84 +32,85 @@ function addRow(){
   sub.innerHTML=`
     <td colspan="11">
       <div class="sub-grid">
-        <div><label>จุดประสงค์</label><textarea></textarea></div>
-        <div><label>ใช้งานที่</label><textarea></textarea></div>
+        <div><label>จุดประสงค์</label><textarea>${data.purpose||''}</textarea></div>
+        <div><label>ใช้งานที่</label><textarea>${data.place||''}</textarea></div>
       </div>
-    </td>`;
+    </td>
+  `;
 
-  tbody.append(main,sub);
-  saveMonth();
+  tbody.appendChild(main);
+  tbody.appendChild(sub);
 }
 
-function deleteRow(btn){
-  if(!confirm('ยืนยันการลบรายการนี้ใช่ไหม?')) return;
-  const tr=btn.closest('tr');
-  tr.nextElementSibling.remove();
-  tr.remove();
-  renumber();
-  recalcGrand();
-  saveMonth();
+function openModal(btn){
+  deleteTargetBtn=btn;
+  document.getElementById('deleteModal').classList.add('show');
+}
+function closeModal(){
+  deleteTargetBtn=null;
+  document.getElementById('deleteModal').classList.remove('show');
+}
+function confirmDelete(){
+  if(!deleteTargetBtn) return;
+  const main=deleteTargetBtn.closest('tr');
+  const sub=main.nextElementSibling;
+  if(sub&&sub.classList.contains('sub-row')) sub.remove();
+  main.remove();
+  closeModal();
+  reindex();
+  calcAll();
+  saveData();
 }
 
-function previewImage(input){
-  const img=input.parentElement.querySelector('img');
-  const file=input.files[0];
-  if(!file) return;
-  const r=new FileReader();
-  r.onload=e=>{img.src=e.target.result;img.style.display='block';};
-  r.readAsDataURL(file);
+function reindex(){
+  const rows=document.querySelectorAll('#tbody tr');
+  let i=1;
+  for(let r=0;r<rows.length;r+=2){rows[r].children[0].innerText=i++;}
 }
-
-function calc(el){
+function calcRow(el){
   const r=el.closest('tr');
   const q=r.querySelector('.buy').value||0;
   const p=r.querySelector('.price').value||0;
   r.querySelector('.sum').innerText=(q*p).toFixed(2);
-  recalcGrand();
+  calcAll();
 }
-
-function recalcGrand(){
+function calcAll(){
   let t=0;
   document.querySelectorAll('.sum').forEach(s=>t+=parseFloat(s.innerText||0));
   document.getElementById('grand').innerText=t.toFixed(2);
 }
-
-function renumber(){
-  document.querySelectorAll('.no').forEach((n,i)=>n.innerText=i+1);
+function saveData(){
+  const month=document.getElementById('month').value;
+  if(!month) return;
+  const rows=[];
+  const trs=document.querySelectorAll('#tbody tr');
+  for(let i=0;i<trs.length;i+=2){
+    const m=trs[i],s=trs[i+1];
+    rows.push({
+      desc:m.querySelector('textarea').value,
+      img:m.querySelector('img').src,
+      unit:m.querySelectorAll('input')[1].value,
+      stock:m.querySelectorAll('input')[2].value,
+      remain:m.querySelectorAll('input')[3].value,
+      buy:m.querySelector('.buy').value,
+      price:m.querySelector('.price').value,
+      vendor:m.querySelectorAll('input')[4].value,
+      purpose:s.querySelectorAll('textarea')[0].value,
+      place:s.querySelectorAll('textarea')[1].value
+    });
+  }
+  localStorage.setItem(STORAGE_PREFIX+month,JSON.stringify({month,dept:document.getElementById('dept').value,rows}));
 }
-
-function saveMonth(){
-  if(!monthInput.value) return;
-  const data=[];
-  document.querySelectorAll('#tbody tr').forEach(tr=>{
-    if(!tr.classList.contains('sub-row')){
-      data.push({main:tr.innerHTML,sub:tr.nextElementSibling.innerHTML});
-    }
-  });
-  localStorage.setItem('PO_'+monthInput.value,JSON.stringify(data));
+function loadData(){
+  const month=document.getElementById('month').value;
+  document.getElementById('tbody').innerHTML='';
+  if(!month){addRow();return;}
+  const data=JSON.parse(localStorage.getItem(STORAGE_PREFIX+month));
+  if(!data){addRow();return;}
+  document.getElementById('dept').value=data.dept;
+  data.rows.forEach(r=>addRow(r));
+  calcAll();
 }
-
-function loadMonth(){
-  const raw=localStorage.getItem('PO_'+monthInput.value);
-  tbody.innerHTML='';
-  if(!raw){addRow();return;}
-  JSON.parse(raw).forEach(d=>{
-    const m=document.createElement('tr');m.innerHTML=d.main;
-    const s=document.createElement('tr');s.className='sub-row';s.innerHTML=d.sub;
-    tbody.append(m,s);
-  });
-  recalcGrand();
-}
-
-function copyPrevMonth(){
-  if(!monthInput.value) return alert('กรุณาเลือกเดือน');
-  const d=new Date(monthInput.value+'-01');
-  d.setMonth(d.getMonth()-1);
-  const prev=d.toISOString().slice(0,7);
-  const raw=localStorage.getItem('PO_'+prev);
-  if(!raw) return alert('ไม่พบข้อมูลเดือนก่อน');
-  localStorage.setItem('PO_'+monthInput.value,raw);
-  loadMonth();
-}
+document.getElementById('month').addEventListener('change',loadData);
 
 addRow();
