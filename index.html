@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
 <base href="/-/">
+
+<!-- ✅ เพิ่ม manifest -->
+<link rel="manifest" href="manifest.json">
+
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -85,5 +89,13 @@
 </div>
 
 <script src="script.js"></script>
+
+<!-- ✅ register service worker -->
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
+
 </body>
 </html>
