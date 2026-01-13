@@ -17,13 +17,13 @@ function addRow(){
     <td><input type="number" class="price" oninput="calc(this)"></td>
     <td class="sum">0.00</td>
     <td><input></td>
-    <td><button class="btn-del" onclick="askDelete(this)">🗑</button></td>`;
+    <td><button onclick="askDelete(this)">🗑</button></td>`;
   const sub=document.createElement('tr');
   sub.className='sub-row';
-  sub.innerHTML=`<td colspan="11"><div class="sub-grid">
-    <div><label>จุดประสงค์</label><textarea></textarea></div>
-    <div><label>ใช้งานที่</label><textarea></textarea></div>
-  </div></td>`;
+  sub.innerHTML=`<td colspan="11">
+    <label>จุดประสงค์</label><textarea></textarea>
+    <label>ใช้งานที่</label><textarea></textarea>
+  </td>`;
   tbody.append(main,sub);
   saveMonth();
 }
@@ -101,18 +101,8 @@ function confirmCopy(){
 function printPDF(){window.print();}
 addRow();
 
-// ================================
-// PWA Service Worker Register
-// ================================
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/-/sw.js')
-      .then(reg => {
-        console.log('Service Worker registered:', reg.scope);
-      })
-      .catch(err => {
-        console.error('Service Worker registration failed:', err);
-      });
+    navigator.serviceWorker.register('/-/sw.js');
   });
 }
