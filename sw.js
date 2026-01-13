@@ -1,18 +1,19 @@
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open('po-app').then(cache =>
-      cache.addAll([
-        './',
-        './index.html',
-        './style.css',
-        './script.js'
-      ])
-    )
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open('po-cache-v1').then(cache => {
+      return cache.addAll([
+        '/-/',
+        '/-/index.html',
+        '/-/script.js',
+        '/-/style.css',
+        '/-/manifest.json'
+      ]);
+    })
   );
 });
 
-self.addEventListener('fetch', e => {
-  e.respondWith(
-    caches.match(e.request).then(res => res || fetch(e.request))
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request).then(response => response || fetch(event.request))
   );
 });
