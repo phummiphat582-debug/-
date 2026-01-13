@@ -3,14 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
-
-<!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#111111">
-
-<!-- GitHub Pages base path -->
 <base href="/-/">
-
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -47,6 +42,34 @@
   <div class="actions">
     <strong>รวมทั้งสิ้น <span id="grand">0.00</span> บาท</strong>
     <button onclick="printPDF()">🖨 พิมพ์ / Save PDF</button>
+  </div>
+</div>
+
+<!-- COPY MODAL -->
+<div class="modal" id="copyModal">
+  <div class="modal-box animate">
+    <h3>คัดลอกรายการ</h3>
+    <label>จากเดือน</label>
+    <input type="month" id="copyFrom">
+    <label>ไปเดือน</label>
+    <input type="month" id="copyTo">
+    <div class="modal-actions">
+      <button onclick="closeCopy()">ยกเลิก</button>
+      <button onclick="confirmCopy()">คัดลอก</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal" id="deleteModal">
+  <div class="modal-box animate">
+    <div style="font-size:48px;color:red">🗑</div>
+    <h3>ยืนยันการลบ</h3>
+    <p>คุณต้องการลบรายการนี้ใช่หรือไม่</p>
+    <div class="modal-actions">
+      <button onclick="closeDelete()">ยกเลิก</button>
+      <button onclick="confirmDelete()">ลบ</button>
+    </div>
   </div>
 </div>
 
