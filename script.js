@@ -17,13 +17,16 @@ function addRow(){
     <td><input type="number" class="price" oninput="calc(this)"></td>
     <td class="sum">0.00</td>
     <td><input></td>
-    <td><button class="btn-del" onclick="askDelete(this)">🗑</button></td>`;
+    <td><button class="btn-del" onclick="askDelete(this)">🗑</button></td>
+  `;
   const sub=document.createElement('tr');
   sub.className='sub-row';
-  sub.innerHTML=`<td colspan="11"><div class="sub-grid">
-    <div><label>จุดประสงค์</label><textarea></textarea></div>
-    <div><label>ใช้งานที่</label><textarea></textarea></div>
-  </div></td>`;
+  sub.innerHTML=`<td colspan="11">
+    <div class="sub-grid">
+      <div><label>จุดประสงค์</label><textarea></textarea></div>
+      <div><label>ใช้งานที่</label><textarea></textarea></div>
+    </div>
+  </td>`;
   tbody.append(main,sub);
   saveMonth();
 }
@@ -79,6 +82,7 @@ function loadMonth(){
   });
   recalcGrand();
 }
+
 function copyWithPrompt(){
   document.getElementById('copyModal').style.display='flex';
   document.getElementById('copyTo').value=monthInput.value;
@@ -92,17 +96,36 @@ function confirmCopy(){
   const f=new Date(from+'-01');
   const t=new Date(to+'-01');
   f.setMonth(f.getMonth()+1);
-  if(f.getTime()!==t.getTime()) return alert('ต้องเป็นเดือนก่อนหน้าเท่านั้น');
+  if(f.getTime()!==t.getTime()) return alert('ต้องคัดลอกจากเดือนก่อนหน้าเท่านั้น');
   const raw=localStorage.getItem('PO_'+from);
   if(!raw) return alert('ไม่พบข้อมูล');
   localStorage.setItem('PO_'+to,raw);
   closeCopy(); loadMonth();
 }
 function printPDF(){window.print();}
+
 addRow();
 
 
-/* === IMAGE PREVIEW (ADD ONLY) === */
+/* === FIX IMAGE UPLOAD (FINAL) === */
+function createImageInput(){
+  const wrapper = document.createElement('div');
+  wrapper.className = 'img-box';
+  wrapper.style.position = 'relative';
+
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.style.width = '100%';
+  input.style.height = '100%';
+  input.style.opacity = '0';
+  input.style.cursor = 'pointer';
+  input.onchange = () => previewImage(input);
+
+  wrapper.appendChild(input);
+  return wrapper;
+}
+
 function previewImage(input){
   const box = input.parentElement;
   const file = input.files[0];
@@ -113,8 +136,6 @@ function previewImage(input){
     box.style.backgroundImage = `url(${reader.result})`;
     box.style.backgroundSize = 'cover';
     box.style.backgroundPosition = 'center';
-    box.innerHTML = '';
-    box.appendChild(input);
   };
   reader.readAsDataURL(file);
 }
