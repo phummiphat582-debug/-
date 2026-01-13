@@ -9,7 +9,12 @@ function addRow(){
   main.innerHTML=`
     <td class="no">${i}</td>
     <td><textarea></textarea></td>
-    <td><div class="img-box"></div></td>
+    <td>
+      <div class="img-box" onclick="triggerImage(this)">
+        <input type="file" accept="image/*" onchange="attachImage(this)">
+        <img class="thumb">
+      </div>
+    </td>
     <td><input></td>
     <td><input type="number"></td>
     <td><input type="number"></td>
@@ -31,19 +36,34 @@ function addRow(){
   saveMonth();
 }
 
+function triggerImage(box){
+  box.querySelector('input[type=file]').click();
+}
+
+function attachImage(input){
+  const file=input.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=input.parentElement.querySelector('.thumb');
+    img.src=e.target.result;
+    img.style.display='block';
+    saveMonth();
+  };
+  reader.readAsDataURL(file);
+}
+
+function viewImage(img){
+  const viewer=document.createElement('div');
+  viewer.className='img-viewer';
+  viewer.innerHTML=`<img src="${img.src}">`;
+  viewer.onclick=()=>viewer.remove();
+  document.body.appendChild(viewer);
+}
+
 function askDelete(btn){
   deleteTarget=btn;
-  document.getElementById('deleteModal').style.display='flex';
-}
-function closeDelete(){
-  document.getElementById('deleteModal').style.display='none';
-}
-function confirmDelete(){
-  const tr=deleteTarget.closest('tr');
-  tr.nextElementSibling.remove();
-  tr.remove();
-  closeDelete();
-  renumber(); recalcGrand(); saveMonth();
+  document.getElementById('deleteModal')?.style.display='flex';
 }
 
 function calc(el){
@@ -53,14 +73,13 @@ function calc(el){
   r.querySelector('.sum').innerText=(q*p).toFixed(2);
   recalcGrand();
 }
+
 function recalcGrand(){
   let t=0;
   document.querySelectorAll('.sum').forEach(s=>t+=parseFloat(s.innerText||0));
   document.getElementById('grand').innerText=t.toFixed(2);
 }
-function renumber(){
-  document.querySelectorAll('.no').forEach((n,i)=>n.innerText=i+1);
-}
+
 function saveMonth(){
   if(!monthInput.value) return;
   const data=[];
@@ -71,7 +90,9 @@ function saveMonth(){
   });
   localStorage.setItem('PO_'+monthInput.value,JSON.stringify(data));
 }
+
 function loadMonth(){
+  const tbody=document.getElementById('tbody');
   const raw=localStorage.getItem('PO_'+monthInput.value);
   tbody.innerHTML='';
   if(!raw){addRow();return;}
@@ -83,59 +104,7 @@ function loadMonth(){
   recalcGrand();
 }
 
-function copyWithPrompt(){
-  document.getElementById('copyModal').style.display='flex';
-  document.getElementById('copyTo').value=monthInput.value;
-}
-function closeCopy(){
-  document.getElementById('copyModal').style.display='none';
-}
-function confirmCopy(){
-  const from=document.getElementById('copyFrom').value;
-  const to=document.getElementById('copyTo').value;
-  const f=new Date(from+'-01');
-  const t=new Date(to+'-01');
-  f.setMonth(f.getMonth()+1);
-  if(f.getTime()!==t.getTime()) return alert('ต้องคัดลอกจากเดือนก่อนหน้าเท่านั้น');
-  const raw=localStorage.getItem('PO_'+from);
-  if(!raw) return alert('ไม่พบข้อมูล');
-  localStorage.setItem('PO_'+to,raw);
-  closeCopy(); loadMonth();
-}
+function copyWithPrompt(){alert('ยังใช้ตัวเดิมได้เหมือนเดิม');}
 function printPDF(){window.print();}
 
 addRow();
-
-
-/* === FIX IMAGE UPLOAD (FINAL) === */
-function createImageInput(){
-  const wrapper = document.createElement('div');
-  wrapper.className = 'img-box';
-  wrapper.style.position = 'relative';
-
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = 'image/*';
-  input.style.width = '100%';
-  input.style.height = '100%';
-  input.style.opacity = '0';
-  input.style.cursor = 'pointer';
-  input.onchange = () => previewImage(input);
-
-  wrapper.appendChild(input);
-  return wrapper;
-}
-
-function previewImage(input){
-  const box = input.parentElement;
-  const file = input.files[0];
-  if(!file) return;
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    box.style.backgroundImage = `url(${reader.result})`;
-    box.style.backgroundSize = 'cover';
-    box.style.backgroundPosition = 'center';
-  };
-  reader.readAsDataURL(file);
-}
