@@ -3,7 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
+<base href="/-/">
 <link rel="stylesheet" href="style.css">
+
+<link rel="manifest" href="/-/manifest.json">
+<meta name="theme-color" content="#111111">
+<link rel="icon" href="/-/icon-192.png">
+
 </head>
 <body>
 <div class="page">
@@ -48,12 +54,72 @@
     <button class="btn add" onclick="copyWithPrompt()">📋 คัดลอก</button>
   </div>
 
+  <!-- SUMMARY (same position as original) -->
   <div class="actions">
     <strong>รวมทั้งสิ้น <span id="grand">0.00</span> บาท</strong>
     <button class="btn-print" onclick="printPDF()">🖨 พิมพ์ / Save PDF</button>
   </div>
 </div>
 
+<!-- COPY MODAL -->
+<div class="modal" id="copyModal">
+  <div class="modal-box animate">
+    <h3>คัดลอกรายการ</h3>
+    <label>จากเดือน</label>
+    <input type="month" id="copyFrom">
+    <label>ไปเดือน</label>
+    <input type="month" id="copyTo">
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeCopy()">ยกเลิก</button>
+      <button class="btn add" onclick="confirmCopy()">คัดลอก</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal" id="deleteModal">
+  <div class="modal-box animate">
+    <div class="trash-big">🗑</div>
+    <h3>ยืนยันการลบ</h3>
+    <p>คุณต้องการลบรายการนี้ใช่หรือไม่</p>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeDelete()">ยกเลิก</button>
+      <button class="btn danger" onclick="confirmDelete()">ลบ</button>
+    </div>
+  </div>
+</div>
+
 <script src="script.js"></script>
+
+<script>
+// === PWA INSTALL (NO UI / LOGIC CHANGE) ===
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/-/sw.js');
+  });
+}
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  const btn = document.createElement('button');
+  btn.textContent = 'ติดตั้งแอป';
+  btn.style.cssText =
+    'position:fixed;bottom:20px;left:20px;padding:10px 16px;' +
+    'border-radius:12px;border:none;background:#111;color:#fff;z-index:9999';
+
+  btn.onclick = async () => {
+    btn.remove();
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  };
+
+  document.body.appendChild(btn);
+});
+</script>
+
 </body>
 </html>
