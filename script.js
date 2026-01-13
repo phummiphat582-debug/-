@@ -17,12 +17,15 @@ function addRow(){
     <td><input type="number" class="price" oninput="calc(this)"></td>
     <td class="sum">0.00</td>
     <td><input></td>
-    <td><button onclick="askDelete(this)">🗑</button></td>`;
+    <td><button class="btn-del" onclick="askDelete(this)">🗑</button></td>
+  `;
   const sub=document.createElement('tr');
   sub.className='sub-row';
   sub.innerHTML=`<td colspan="11">
-    <label>จุดประสงค์</label><textarea></textarea>
-    <label>ใช้งานที่</label><textarea></textarea>
+    <div class="sub-grid">
+      <div><label>จุดประสงค์</label><textarea></textarea></div>
+      <div><label>ใช้งานที่</label><textarea></textarea></div>
+    </div>
   </td>`;
   tbody.append(main,sub);
   saveMonth();
@@ -79,6 +82,7 @@ function loadMonth(){
   });
   recalcGrand();
 }
+
 function copyWithPrompt(){
   document.getElementById('copyModal').style.display='flex';
   document.getElementById('copyTo').value=monthInput.value;
@@ -92,17 +96,12 @@ function confirmCopy(){
   const f=new Date(from+'-01');
   const t=new Date(to+'-01');
   f.setMonth(f.getMonth()+1);
-  if(f.getTime()!==t.getTime()) return alert('ต้องเป็นเดือนก่อนหน้าเท่านั้น');
+  if(f.getTime()!==t.getTime()) return alert('ต้องคัดลอกจากเดือนก่อนหน้าเท่านั้น');
   const raw=localStorage.getItem('PO_'+from);
   if(!raw) return alert('ไม่พบข้อมูล');
   localStorage.setItem('PO_'+to,raw);
   closeCopy(); loadMonth();
 }
 function printPDF(){window.print();}
-addRow();
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/-/sw.js');
-  });
-}
+addRow();
