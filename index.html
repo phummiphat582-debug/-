@@ -3,10 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
 <base href="/-/">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <div class="page">
   <div class="header">
     <div class="header-left">
@@ -14,14 +17,8 @@
       <h2>THE SCENERY VINTAGE FARM</h2>
     </div>
     <div class="header-right">
-      <div>
-        <label>เดือน</label>
-        <input type="month" id="monthPicker">
-      </div>
-      <div>
-        <label>แผนก</label>
-        <input type="text">
-      </div>
+      <label>เดือน <input type="month" id="monthPicker"></label>
+      <label>แผนก <input type="text"></label>
     </div>
   </div>
 
@@ -29,46 +26,36 @@
     <table>
       <thead>
         <tr>
-          <th>ลำดับ</th>
-          <th>รายละเอียดสินค้า</th>
-          <th>รูป</th>
-          <th>หน่วย</th>
-          <th>สต็อก</th>
-          <th>คงเหลือ</th>
-          <th>ซื้อเพิ่ม</th>
-          <th>ราคา/หน่วย</th>
-          <th>ยอดรวม</th>
-          <th>ตัวแทนจำหน่าย</th>
-          <th>ลบ</th>
+          <th>ลำดับ</th><th>รายละเอียดสินค้า</th><th>รูป</th>
+          <th>หน่วย</th><th>สต็อก</th><th>คงเหลือ</th>
+          <th>ซื้อเพิ่ม</th><th>ราคา/หน่วย</th>
+          <th>ยอดรวม</th><th>ตัวแทนจำหน่าย</th><th>ลบ</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
-    <button class="btn add" onclick="addRow()">+ เพิ่มรายการ</button>
-    <button class="btn add" onclick="copyWithPrompt()">📋 คัดลอก</button>
+
+    <button onclick="addRow()">+ เพิ่มรายการ</button>
+    <button onclick="copyWithPrompt()">📋 คัดลอก</button>
   </div>
 
-  <div class="summary-wrap">
-    <div class="summary-total">
-      รวมทั้งสิ้น <span id="grand">0.00</span> บาท
-    </div>
-    <div class="summary-action">
-      <button class="btn-print" onclick="printPDF()">🖨 พิมพ์ / Save PDF</button>
-    </div>
+  <div class="actions">
+    <strong>รวมทั้งสิ้น <span id="grand">0.00</span> บาท</strong>
+    <button onclick="printPDF()">🖨 พิมพ์ / Save PDF</button>
   </div>
 </div>
 
 <!-- COPY MODAL -->
 <div class="modal" id="copyModal">
   <div class="modal-box animate">
-    <h3>📋 คัดลอกรายการ</h3>
+    <h3>คัดลอกรายการ</h3>
     <label>จากเดือน</label>
     <input type="month" id="copyFrom">
     <label>ไปเดือน</label>
     <input type="month" id="copyTo">
     <div class="modal-actions">
-      <button class="btn ghost" onclick="closeCopy()">ยกเลิก</button>
-      <button class="btn add" onclick="confirmCopy()">คัดลอก</button>
+      <button onclick="closeCopy()">ยกเลิก</button>
+      <button onclick="confirmCopy()">คัดลอก</button>
     </div>
   </div>
 </div>
@@ -76,12 +63,12 @@
 <!-- DELETE MODAL -->
 <div class="modal" id="deleteModal">
   <div class="modal-box animate">
-    <div class="trash-big">🗑</div>
+    <div style="font-size:48px;color:red">🗑</div>
     <h3>ยืนยันการลบ</h3>
     <p>คุณต้องการลบรายการนี้ใช่หรือไม่</p>
     <div class="modal-actions">
-      <button class="btn ghost" onclick="closeDelete()">ยกเลิก</button>
-      <button class="btn danger" onclick="confirmDelete()">ลบรายการ</button>
+      <button onclick="closeDelete()">ยกเลิก</button>
+      <button onclick="confirmDelete()">ลบ</button>
     </div>
   </div>
 </div>
