@@ -3,13 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
 <base href="/-/">
 <link rel="stylesheet" href="style.css">
-
-<link rel="manifest" href="/-/manifest.json">
-<meta name="theme-color" content="#111111">
-<link rel="icon" href="/-/icon-192.png">
-
 </head>
 <body>
 <div class="page">
@@ -90,36 +87,5 @@
 </div>
 
 <script src="script.js"></script>
-
-<script>
-// === PWA INSTALL (NO UI / LOGIC CHANGE) ===
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/-/sw.js');
-  });
-}
-
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-
-  const btn = document.createElement('button');
-  btn.textContent = 'ติดตั้งแอป';
-  btn.style.cssText =
-    'position:fixed;bottom:20px;left:20px;padding:10px 16px;' +
-    'border-radius:12px;border:none;background:#111;color:#fff;z-index:9999';
-
-  btn.onclick = async () => {
-    btn.remove();
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-  };
-
-  document.body.appendChild(btn);
-});
-</script>
-
 </body>
 </html>
