@@ -3,148 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
-
-<!-- PWA -->
-<link rel="manifest" href="manifest.json">
-
 <style>
 *{box-sizing:border-box}
-body{
-  margin:0;
-  background:#f0f1f3;
-  font-family:Segoe UI,Tahoma,sans-serif;
-  color:#222
-}
-.page{
-  max-width:1800px;
-  margin:32px auto;
-  background:#fff;
-  padding:32px 36px;
-  border-radius:16px
-}
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-end;
-  border-bottom:1px solid #d6d9de;
-  padding-bottom:16px
-}
+body{margin:0;background:#f0f1f3;font-family:Segoe UI,Tahoma,sans-serif;color:#222}
+.page{max-width:1800px;margin:32px auto;background:#fff;padding:32px 36px;border-radius:16px}
+.header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #d6d9de;padding-bottom:16px}
 .header-left h1{margin:0;font-size:28px}
 .header-left h2{margin:4px 0 0;font-size:16px;color:#666}
 .header-right{display:flex;gap:20px}
 label{font-size:13px;font-weight:600;color:#555}
-input,textarea{
-  width:100%;
-  padding:8px 10px;
-  border:1px solid #d1d5db;
-  border-radius:10px;
-  font-size:13px
-}
-.card{
-  margin-top:24px;
-  background:#fafafa;
-  padding:20px;
-  border-radius:16px
-}
-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:13px
-}
-th{
-  background:#2f2f2f;
-  color:#fff;
-  padding:10px
-}
-td{
-  padding:8px;
-  border-bottom:1px solid #e5e7eb;
-  vertical-align:top
-}
-.sub-row td{
-  background:#f9fafb;
-  padding:12px
-}
-.sub-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px
-}
-.btn{
-  padding:10px 22px;
-  border-radius:12px;
-  font-weight:600;
-  border:none;
-  cursor:pointer
-}
+input,textarea{width:100%;padding:8px 10px;border:1px solid #d1d5db;border-radius:10px;font-size:13px}
+.card{margin-top:24px;background:#fafafa;padding:20px;border-radius:16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#2f2f2f;color:#fff;padding:10px}
+td{padding:8px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+.sub-row td{background:#f9fafb;padding:12px}
+.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.btn{padding:10px 22px;border-radius:12px;font-weight:600;border:none;cursor:pointer}
 .btn.add{background:#e6e8ec}
-.btn-print{
-  margin-left:16px;
-  background:#111;
-  color:#fff;
-  padding:8px 16px;
-  border-radius:10px
-}
-.actions{
-  margin-top:32px;
-  display:flex;
-  justify-content:flex-end;
-  align-items:center;
-  gap:16px
-}
-.btn-del{
-  background:#fee2e2;
-  border:none;
-  border-radius:8px;
-  padding:6px 10px;
-  cursor:pointer
-}
-.img-box{
-  width:180px;
-  height:180px;
-  border:2px dashed #94a3b8;
-  border-radius:16px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  overflow:hidden;
-  background:#fff;
-}
-.img-box img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-.img-hint{
-  font-size:13px;
-  color:#64748b;
-}
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  backdrop-filter:blur(3px);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:1000
-}
-.modal-box{
-  background:#fff;
-  padding:24px;
-  border-radius:16px;
-  width:320px;
-  text-align:center
-}
-.trash-big{
-  font-size:48px;
-  color:#dc2626;
-  margin-bottom:8px
-}
-@media print{
-  button,.btn-del,.btn-print{display:none!important}
-}
+.btn-print{margin-left:16px;background:#111;color:#fff;padding:8px 16px;border-radius:10px}
+.actions{margin-top:32px;display:flex;justify-content:flex-end;align-items:center;gap:16px}
+.btn-del{background:#fee2e2;border:none;border-radius:8px;padding:6px 10px;cursor:pointer}
+.img-box{width:180px;height:180px;border:2px dashed #94a3b8;border-radius:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;background:#fff}
+.img-box img{width:100%;height:100%;object-fit:cover}
+.img-hint{font-size:13px;color:#64748b}
+@media print{button,.btn-del,.btn-print{display:none!important}}
 </style>
 </head>
 <body>
@@ -162,7 +45,7 @@ td{
       </div>
       <div>
         <label>แผนก</label>
-        <input type="text">
+        <input type="text" id="dept">
       </div>
     </div>
   </div>
@@ -171,191 +54,113 @@ td{
     <table>
       <thead>
         <tr>
-          <th>ลำดับ</th>
-          <th>รายละเอียดสินค้า</th>
-          <th>รูป</th>
-          <th>หน่วย</th>
-          <th>สต็อก</th>
-          <th>คงเหลือ</th>
-          <th>ซื้อเพิ่ม</th>
-          <th>ราคา/หน่วย</th>
-          <th>ยอดรวม</th>
-          <th>ตัวแทนจำหน่าย</th>
-          <th>ลบ</th>
+          <th>ลำดับ</th><th>รายละเอียดสินค้า</th><th>รูป</th><th>หน่วย</th>
+          <th>สต็อก</th><th>คงเหลือ</th><th>ซื้อเพิ่ม</th>
+          <th>ราคา/หน่วย</th><th>ยอดรวม</th><th>ตัวแทนจำหน่าย</th><th>ลบ</th>
         </tr>
       </thead>
       <tbody id="tbody"></tbody>
     </table>
-
     <button class="btn add" onclick="addRow()">+ เพิ่มรายการ</button>
-    <button class="btn add" onclick="copyWithPrompt()">📋 คัดลอก</button>
   </div>
 
   <div class="actions">
     <strong>รวมทั้งสิ้น <span id="grand">0.00</span> บาท</strong>
-    <button class="btn-print" onclick="printPDF()">🖨 พิมพ์ / Save PDF</button>
-  </div>
-</div>
-
-<div class="modal" id="copyModal">
-  <div class="modal-box">
-    <h3>คัดลอกรายการ</h3>
-    <label>จากเดือน</label>
-    <input type="month" id="copyFrom">
-    <label>ไปเดือน</label>
-    <input type="month" id="copyTo">
-    <div class="modal-actions">
-      <button class="btn" onclick="closeCopy()">ยกเลิก</button>
-      <button class="btn add" onclick="confirmCopy()">คัดลอก</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="deleteModal">
-  <div class="modal-box">
-    <div class="trash-big">🗑</div>
-    <h3>ยืนยันการลบ</h3>
-    <p>คุณต้องการลบรายการนี้ใช่หรือไม่</p>
-    <div class="modal-actions">
-      <button class="btn" onclick="closeDelete()">ยกเลิก</button>
-      <button class="btn add" onclick="confirmDelete()">ลบ</button>
-    </div>
+    <button class="btn-print" onclick="window.print()">🖨 พิมพ์ / Save PDF</button>
   </div>
 </div>
 
 <script>
-const monthInput=document.getElementById('monthPicker');
-const tbody=document.getElementById('tbody');
-let deleteTarget=null;
+const monthInput = document.getElementById('monthPicker');
+const tbody = document.getElementById('tbody');
 
-monthInput.addEventListener('change',loadMonth);
+monthInput.addEventListener('change', loadMonth);
 
-function addRow(){
-  const i=tbody.children.length/2+1;
-  const main=document.createElement('tr');
-  main.innerHTML=`
-    <td class="no">${i}</td>
-    <td><textarea></textarea></td>
+function addRow(data={}){
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td class="no"></td>
+    <td><textarea>${data.desc||''}</textarea></td>
     <td>
-      <div class="img-box" onclick="pickImage(this)">
-        <span class="img-hint">แนบรูป</span>
-        <input type="file" accept="image/*" hidden onchange="previewImage(this)">
+      <div class="img-box">
+        ${data.img ? `<img src="${data.img}">` : '<span class="img-hint">แนบรูป</span>'}
+        <input type="file" accept="image/*" hidden>
       </div>
     </td>
-    <td><input></td>
-    <td><input type="number"></td>
-    <td><input type="number"></td>
-    <td><input type="number" class="buy" oninput="calc(this)"></td>
-    <td><input type="number" class="price" oninput="calc(this)"></td>
+    <td><input value="${data.unit||''}"></td>
+    <td><input type="number" value="${data.stock||''}"></td>
+    <td><input type="number" value="${data.remain||''}"></td>
+    <td><input type="number" class="buy" value="${data.buy||0}"></td>
+    <td><input type="number" class="price" value="${data.price||0}"></td>
     <td class="sum">0.00</td>
-    <td><input></td>
-    <td><button class="btn-del" onclick="askDelete(this)">🗑</button></td>
+    <td><input value="${data.vendor||''}"></td>
+    <td><button class="btn-del" onclick="this.closest('tr').remove();saveMonth()">🗑</button></td>
   `;
-  const sub=document.createElement('tr');
-  sub.className='sub-row';
-  sub.innerHTML=`
-    <td colspan="11">
-      <div class="sub-grid">
-        <div><label>จุดประสงค์</label><textarea></textarea></div>
-        <div><label>ใช้งานที่</label><textarea></textarea></div>
-      </div>
-    </td>
-  `;
-  tbody.append(main,sub);
+  tbody.appendChild(tr);
+  renumber();
+  calcRow(tr);
+  bindRow(tr);
   saveMonth();
 }
 
-function pickImage(box){
-  box.querySelector('input[type=file]').click();
+function bindRow(tr){
+  tr.querySelectorAll('input,textarea').forEach(el=>{
+    el.addEventListener('input', saveMonth);
+  });
+  const box=tr.querySelector('.img-box');
+  const fileInput=box.querySelector('input[type=file]');
+  box.onclick=()=>fileInput.click();
+  fileInput.onchange=()=>{
+    const r=new FileReader();
+    r.onload=()=>{box.innerHTML=`<img src="${r.result}"><input type="file" hidden>`;bindRow(tr);saveMonth();}
+    r.readAsDataURL(fileInput.files[0]);
+  }
 }
 
-function previewImage(input){
-  const file=input.files[0];
-  if(!file) return;
-  const reader=new FileReader();
-  reader.onload=()=>{
-    const box=input.closest('.img-box');
-    box.innerHTML=`<img src="${reader.result}">`;
-    box.appendChild(input);
-    saveMonth();
-  };
-  reader.readAsDataURL(file);
+function calcRow(tr){
+  const q=tr.querySelector('.buy').value||0;
+  const p=tr.querySelector('.price').value||0;
+  tr.querySelector('.sum').innerText=(q*p).toFixed(2);
+  recalc();
 }
 
-function calc(el){
-  const r=el.closest('tr');
-  const q=r.querySelector('.buy').value||0;
-  const p=r.querySelector('.price').value||0;
-  r.querySelector('.sum').innerText=(q*p).toFixed(2);
-  recalcGrand();
-}
-
-function recalcGrand(){
+function recalc(){
   let t=0;
-  document.querySelectorAll('.sum').forEach(s=>t+=parseFloat(s.innerText||0));
+  document.querySelectorAll('.sum').forEach(s=>t+=parseFloat(s.innerText));
   document.getElementById('grand').innerText=t.toFixed(2);
 }
 
-function askDelete(btn){
-  deleteTarget=btn;
-  document.getElementById('deleteModal').style.display='flex';
-}
-function closeDelete(){
-  document.getElementById('deleteModal').style.display='none';
-}
-function confirmDelete(){
-  const tr=deleteTarget.closest('tr');
-  tr.nextElementSibling.remove();
-  tr.remove();
-  closeDelete();
-  renumber(); recalcGrand(); saveMonth();
-}
 function renumber(){
   document.querySelectorAll('.no').forEach((n,i)=>n.innerText=i+1);
 }
+
 function saveMonth(){
   if(!monthInput.value) return;
-  const data=[];
-  document.querySelectorAll('#tbody tr').forEach(tr=>{
-    if(!tr.classList.contains('sub-row')){
-      data.push({main:tr.innerHTML,sub:tr.nextElementSibling.innerHTML});
-    }
+  const rows=[];
+  tbody.querySelectorAll('tr').forEach(tr=>{
+    rows.push({
+      desc:tr.querySelector('textarea').value,
+      img:tr.querySelector('img')?.src||'',
+      unit:tr.children[3].querySelector('input').value,
+      stock:tr.children[4].querySelector('input').value,
+      remain:tr.children[5].querySelector('input').value,
+      buy:tr.children[6].querySelector('input').value,
+      price:tr.children[7].querySelector('input').value,
+      vendor:tr.children[9].querySelector('input').value
+    });
+    calcRow(tr);
   });
-  localStorage.setItem('PO_'+monthInput.value,JSON.stringify(data));
+  localStorage.setItem('PO_'+monthInput.value, JSON.stringify(rows));
 }
+
 function loadMonth(){
-  const raw=localStorage.getItem('PO_'+monthInput.value);
   tbody.innerHTML='';
+  const raw=localStorage.getItem('PO_'+monthInput.value);
   if(!raw){addRow();return;}
-  JSON.parse(raw).forEach(d=>{
-    const m=document.createElement('tr'); m.innerHTML=d.main;
-    const s=document.createElement('tr'); s.className='sub-row'; s.innerHTML=d.sub;
-    tbody.append(m,s);
-  });
-  recalcGrand();
+  JSON.parse(raw).forEach(r=>addRow(r));
 }
-function copyWithPrompt(){
-  document.getElementById('copyModal').style.display='flex';
-  document.getElementById('copyTo').value=monthInput.value;
-}
-function closeCopy(){
-  document.getElementById('copyModal').style.display='none';
-}
-function confirmCopy(){
-  const from=document.getElementById('copyFrom').value;
-  const to=document.getElementById('copyTo').value;
-  const f=new Date(from+'-01');
-  const t=new Date(to+'-01');
-  f.setMonth(f.getMonth()+1);
-  if(f.getTime()!==t.getTime()) return alert('ต้องคัดลอกจากเดือนก่อนหน้าเท่านั้น');
-  const raw=localStorage.getItem('PO_'+from);
-  if(!raw) return alert('ไม่พบข้อมูล');
-  localStorage.setItem('PO_'+to,raw);
-  closeCopy(); loadMonth();
-}
-function printPDF(){ window.print(); }
+
 addRow();
 </script>
-
 </body>
 </html>
