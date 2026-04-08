@@ -2,267 +2,328 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>ใบสั่งซื้อสินค้า</title>
+<title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
+
+<link rel="manifest" href="/TRO/manifest.json">
+<meta name="theme-color" content="#111111">
 
 <style>
-body{font-family:sans-serif;background:#f0f1f3;margin:0}
-.page{max-width:1400px;margin:20px auto;background:#fff;padding:20px;border-radius:12px}
-table{width:100%;border-collapse:collapse}
-th{background:#333;color:#fff;padding:6px}
-td{padding:6px;border-bottom:1px solid #ddd}
-input,textarea{width:100%}
-.img-box{width:100px;height:100px;border:1px dashed #aaa;display:flex;align-items:center;justify-content:center;cursor:pointer}
+*{box-sizing:border-box}
+body{margin:0;background:#f0f1f3;font-family:Segoe UI,Tahoma,sans-serif;color:#222}
+.page{max-width:1800px;margin:32px auto;background:#fff;padding:32px 36px;border-radius:16px}
+.header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #d6d9de;padding-bottom:16px}
+.header-left h1{margin:0;font-size:28px}
+.header-left h2{margin:4px 0 0;font-size:16px;color:#666}
+.header-right{display:flex;gap:20px}
+label{font-size:12px;font-weight:600;color:#555}
+input,textarea{width:100%;padding:6px 8px;border:1px solid #d1d5db;border-radius:8px;font-size:12px}
+textarea{resize:vertical}
+.card{margin-top:24px;background:#fafafa;padding:20px;border-radius:16px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#2f2f2f;color:#fff;padding:8px}
+td{padding:6px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+.btn{padding:8px 18px;border-radius:12px;font-weight:600;border:none;cursor:pointer}
+.btn.add{background:#e6e8ec}
+.btn-del{background:#fee2e2;border:none;border-radius:8px;padding:4px 8px;cursor:pointer}
+.actions{margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:16px}
+.img-box{width:130px;height:130px;border:2px dashed #94a3b8;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;background:#fff}
 .img-box img{width:100%;height:100%;object-fit:cover}
-.btn{padding:6px 12px;margin:5px;cursor:pointer}
+.img-hint{font-size:11px;color:#64748b;text-align:center}
+.sub-row td{background:#f9fafb}
+.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 
 /* popup */
-.popup-bg{
-position:fixed;inset:0;
-background:rgba(0,0,0,.5);
-display:none;align-items:center;justify-content:center;
+.popup-backdrop{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.45);
+  backdrop-filter:blur(2px);
+  display:none;align-items:center;justify-content:center;
+  z-index:3000;
 }
 .popup{
-background:#fff;padding:20px;border-radius:12px;
+  background:#fff;border-radius:18px;
+  padding:24px;width:360px;text-align:center;
+  transform:translateY(20px) scale(.95);
+  opacity:0;transition:.25s ease;
 }
+.popup.show{transform:none;opacity:1}
+.popup-actions{display:flex;gap:10px;justify-content:center;margin-top:18px}
+.popup .danger{background:#dc2626;color:#fff}
+.popup .primary{background:#2563eb;color:#fff}
+.popup .ghost{background:#e5e7eb}
+
+@media print{button,.btn-del,#installBtn{display:none!important}}
 </style>
 </head>
-
 <body>
 
 <div class="page">
+  <div class="header">
+    <div class="header-left">
+      <h1>ใบสั่งซื้อสินค้า</h1>
+      <h2>THE SCENERY VINTAGE FARM</h2>
+    </div>
+    <div class="header-right">
+      <div><label>เดือน</label><input type="month" id="monthPicker"></div>
+      <div><label>แผนก</label><input type="text" id="deptInput"></div>
+    </div>
+  </div>
 
-เดือน <input type="month" id="monthPicker">
-แผนก <input id="deptInput">
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>รายละเอียด</th><th>รูป</th><th>หน่วย</th>
+          <th>สต็อก</th><th>คงเหลือ</th><th>ซื้อเพิ่ม</th>
+          <th>ราคา</th><th>รวม</th><th>ร้าน</th><th>ลบ</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <button class="btn add" id="addBtn">+ เพิ่มรายการ</button>
+  </div>
 
-<button class="btn" onclick="addRow()">+ เพิ่ม</button>
-<button class="btn" onclick="exportData()">💾 เซฟ</button>
-<button class="btn" onclick="importData()">📂 กู้</button>
-<input type="file" id="importFile" hidden>
-
-<table>
-<thead>
-<tr>
-<th>#</th><th>รายการ</th><th>รูป</th><th>ซื้อ</th><th>ราคา</th><th>รวม</th><th>ลบ</th>
-</tr>
-</thead>
-<tbody id="tbody"></tbody>
-</table>
-
-รวม: <span id="grand">0</span>
-
+  <div class="actions">
+    <strong>รวม <span id="grand">0.00</span> บาท</strong>
+    <div>
+      <button class="btn add" onclick="exportData()">💾 เซฟข้อมูล</button>
+      <button class="btn add" onclick="importData()">📂 กู้ข้อมูล</button>
+      <input type="file" id="importFile" accept=".json" hidden>
+      <button class="btn" onclick="window.print()">🖨 พิมพ์ / Save PDF</button>
+    </div>
+  </div>
 </div>
 
 <!-- popup -->
-<div class="popup-bg" id="popup">
+<div class="popup-backdrop" id="popup">
   <div class="popup" id="popupBox">
-    <div id="popupText"></div>
+    <h3 id="popupTitle"></h3>
+    <p id="popupMsg"></p>
+    <div class="popup-actions" id="popupActions"></div>
   </div>
 </div>
 
 <script>
 const popup=document.getElementById('popup');
-const popupText=document.getElementById('popupText');
+const popupBox=document.getElementById('popupBox');
 
-function showPopup(msg){
-  popupText.innerText=msg;
-  popup.style.display='flex';
-}
-function closePopup(){
-  popup.style.display='none';
-}
-
-/* คลิกพื้นหลังปิด */
 popup.addEventListener('click',e=>{
   if(e.target===popup) closePopup();
 });
 
-/* ESC ปิด */
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape') closePopup();
 });
 
-/* IndexedDB */
-let db;
-const req=indexedDB.open('imgDB',1);
-req.onupgradeneeded=e=>{
-  db=e.target.result;
-  db.createObjectStore('img',{keyPath:'id'});
-};
-req.onsuccess=e=>db=e.target.result;
-
-const tbody=document.getElementById('tbody');
-const monthPicker=document.getElementById('monthPicker');
-const deptInput=document.getElementById('deptInput');
-
-/* เพิ่มแถว */
-function addRow(d={}){
-  if(!monthPicker.value){
-    showPopup('กรุณาเลือกเดือน');
-    return;
-  }
-
-  const id=d.id||crypto.randomUUID();
-  const tr=document.createElement('tr');
-  tr.dataset.id=id;
-
-  tr.innerHTML=`
-  <td class="no"></td>
-  <td><input value="${d.desc||''}"></td>
-  <td><div class="img-box"><input type="file" hidden></div></td>
-  <td><input type="number" class="buy" value="${d.buy||0}"></td>
-  <td><input type="number" class="price" value="${d.price||0}"></td>
-  <td class="sum">0</td>
-  <td><button onclick="delRow(this)">🗑</button></td>
-  `;
-
-  tbody.appendChild(tr);
-  bindRow(tr);
-  renumber();
-  calcAll();
+function showPopup({title,msg,actions=[]}){
+  popupTitle.innerText=title;
+  popupMsg.innerText=msg||'';
+  popupActions.innerHTML='';
+  actions.forEach(a=>{
+    const b=document.createElement('button');
+    b.className='btn '+(a.type||'ghost');
+    b.innerText=a.label;
+    b.onclick=()=>{closePopup();a.onClick&&a.onClick()};
+    popupActions.appendChild(b);
+  });
+  popup.style.display='flex';
+  requestAnimationFrame(()=>popupBox.classList.add('show'));
+}
+function closePopup(){
+  popupBox.classList.remove('show');
+  setTimeout(()=>popup.style.display='none',200);
 }
 
-/* bind */
-function bindRow(tr){
-  const id=tr.dataset.id;
-  const box=tr.querySelector('.img-box');
+/* IndexedDB */
+let dbReady=false, db;
+const dbReq=indexedDB.open('PO_IMAGES',1);
+dbReq.onupgradeneeded=e=>{
+  db=e.target.result;
+  db.createObjectStore('images',{keyPath:'id'});
+};
+dbReq.onsuccess=e=>{
+  db=e.target.result;
+  dbReady=true;
+};
+
+/* logic */
+const monthPicker=document.getElementById('monthPicker');
+const deptInput=document.getElementById('deptInput');
+const tbody=document.getElementById('tbody');
+const addBtn=document.getElementById('addBtn');
+
+addBtn.onclick=()=>{
+  if(!monthPicker.value){
+    showPopup({title:'กรุณาเลือกเดือน'});
+    return;
+  }
+  addRow();
+};
+
+function addRow(d={}){
+  const rowId=d.id||crypto.randomUUID();
+  const m=document.createElement('tr');
+  const s=document.createElement('tr'); s.className='sub-row';
+  m.dataset.id=rowId;
+
+  m.innerHTML=`
+    <td class="no"></td>
+    <td><textarea>${d.desc||''}</textarea></td>
+    <td><div class="img-box"><span class="img-hint">แนบรูป</span><input type="file" hidden></div></td>
+    <td><input value="${d.unit||''}"></td>
+    <td><input type="number" value="${d.stock||''}"></td>
+    <td><input value="${d.remain||''}"></td>
+    <td><input type="number" class="buy" value="${d.buy||0}"></td>
+    <td><input type="number" class="price" value="${d.price||0}"></td>
+    <td class="sum">0.00</td>
+    <td><input value="${d.vendor||''}"></td>
+    <td><button class="btn-del">🗑</button></td>`;
+
+  s.innerHTML=`<td colspan="11"><div class="sub-grid">
+  <div><label>จุดประสงค์</label><textarea>${d.purpose||''}</textarea></div>
+  <div><label>สถานที่ใช้งาน</label><textarea>${d.location||''}</textarea></div>
+  </div></td>`;
+
+  tbody.append(m,s);
+  bindRow(m,s);
+  renumber(); calcAll(); saveMonth();
+}
+
+function bindRow(m,s){
+  [...m.querySelectorAll('input,textarea'),...s.querySelectorAll('textarea')]
+    .forEach(e=>e.oninput=()=>{calcAll();saveMonth();});
+
+  const rowId=m.dataset.id;
+  const box=m.querySelector('.img-box');
   const input=box.querySelector('input');
 
   box.onclick=()=>input.click();
 
   input.onchange=()=>{
+    if(!dbReady) return;
     const f=input.files[0];
-    if(!f)return;
+    if(!f) return;
 
     const r=new FileReader();
     r.onload=()=>{
-      db.transaction('img','readwrite').objectStore('img').put({id,data:r.result});
+      db.transaction('images','readwrite')
+        .objectStore('images')
+        .put({id:rowId,data:r.result});
 
-      let img=box.querySelector('img');
+      let img = box.querySelector('img');
+
       if(!img){
-        img=document.createElement('img');
+        img = document.createElement('img');
         box.innerHTML='';
         box.appendChild(img);
         box.appendChild(input);
       }
-      img.src=r.result;
+
+      img.src = r.result;
     };
     r.readAsDataURL(f);
   };
 
-  db.transaction('img','readonly').objectStore('img').get(id).onsuccess=e=>{
-    if(e.target.result){
-      let img=document.createElement('img');
-      img.src=e.target.result.data;
-      box.innerHTML='';
-      box.appendChild(img);
-      box.appendChild(input);
-    }
+  if(dbReady){
+    db.transaction('images','readonly')
+      .objectStore('images')
+      .get(rowId).onsuccess=e=>{
+        if(e.target.result){
+          let img = document.createElement('img');
+          img.src = e.target.result.data;
+          box.innerHTML='';
+          box.appendChild(img);
+          box.appendChild(input);
+        }
+      };
+  }
+
+  m.querySelector('.btn-del').onclick=()=>{
+    showPopup({
+      title:'ยืนยันการลบ',
+      actions:[
+        {label:'ยกเลิก'},
+        {label:'ลบ',type:'danger',onClick:()=>{
+          m.nextSibling.remove(); m.remove();
+          renumber(); calcAll(); saveMonth();
+        }}
+      ]
+    });
   };
-
-  tr.querySelectorAll('input').forEach(i=>{
-    i.oninput=()=>{
-      calcAll();
-      saveMonth();
-    }
-  });
 }
 
-/* ลบ */
-function delRow(btn){
-  btn.closest('tr').remove();
-  renumber();
-  calcAll();
-  saveMonth();
-}
-
-/* เลข */
-function renumber(){
-  let i=1;
-  document.querySelectorAll('.no').forEach(n=>n.innerText=i++);
-}
-
-/* คำนวณ */
+function renumber(){let i=1;tbody.querySelectorAll('.no').forEach(n=>n.innerText=i++)}
 function calcAll(){
   let g=0;
-  document.querySelectorAll('.buy').forEach(b=>{
+  tbody.querySelectorAll('.buy').forEach(b=>{
     const tr=b.closest('tr');
-    const s=b.value*tr.querySelector('.price').value||0;
+    const s=(b.value*tr.querySelector('.price').value||0).toFixed(2);
     tr.querySelector('.sum').innerText=s;
     g+=+s;
   });
-  grand.innerText=g;
+  grand.innerText=g.toFixed(2);
 }
 
-/* SAVE */
 function saveMonth(){
-  if(!monthPicker.value)return;
-
+  if(!monthPicker.value) return;
   const rows=[];
-  document.querySelectorAll('#tbody tr').forEach(tr=>{
+  const trs=[...tbody.children];
+  for(let i=0;i<trs.length;i+=2){
+    const m=trs[i], s=trs[i+1];
     rows.push({
-      id:tr.dataset.id,
-      desc:tr.children[1].querySelector('input').value,
-      buy:tr.children[3].querySelector('input').value,
-      price:tr.children[4].querySelector('input').value
+      id:m.dataset.id,
+      desc:m.children[1].querySelector('textarea').value,
+      unit:m.children[3].querySelector('input').value,
+      stock:m.children[4].querySelector('input').value,
+      remain:m.children[5].querySelector('input').value,
+      buy:m.children[6].querySelector('input').value,
+      price:m.children[7].querySelector('input').value,
+      vendor:m.children[9].querySelector('input').value,
+      purpose:s.querySelectorAll('textarea')[0].value,
+      location:s.querySelectorAll('textarea')[1].value
     });
-  });
-
-  localStorage.setItem('PO_'+monthPicker.value,JSON.stringify({
-    dept:deptInput.value,
-    rows
-  }));
+  }
+  localStorage.setItem('PO_'+monthPicker.value,JSON.stringify({dept:deptInput.value,rows}));
 }
 
-/* LOAD */
 function loadMonth(){
   tbody.innerHTML='';
-  const d=JSON.parse(localStorage.getItem('PO_'+monthPicker.value)||'{}');
+  const r=localStorage.getItem('PO_'+monthPicker.value);
+  if(!r) return;
+  const d=JSON.parse(r);
   deptInput.value=d.dept||'';
-  (d.rows||[]).forEach(addRow);
+  d.rows.forEach(addRow);
 }
 
 monthPicker.onchange=loadMonth;
 
-/* EXPORT */
 function exportData(){
-  if(!monthPicker.value){
-    showPopup('เลือกเดือนก่อน');
-    return;
-  }
-
   const data=localStorage.getItem('PO_'+monthPicker.value);
   if(!data){
-    showPopup('ไม่มีข้อมูล');
+    showPopup({title:'ไม่มีข้อมูล'});
     return;
   }
-
-  const blob=new Blob([data]);
+  const blob=new Blob([data],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download='data.json';
+  a.download='PO_'+monthPicker.value+'.json';
   a.click();
 }
 
-/* IMPORT */
 function importData(){
-  if(!monthPicker.value){
-    showPopup('เลือกเดือนก่อน');
-    return;
-  }
-  importFile.click();
+  document.getElementById('importFile').click();
 }
-
-importFile.onchange=e=>{
+document.getElementById('importFile').onchange=e=>{
   const f=e.target.files[0];
+  if(!f) return;
   const r=new FileReader();
   r.onload=()=>{
     localStorage.setItem('PO_'+monthPicker.value,r.result);
     loadMonth();
-    showPopup('กู้ข้อมูลสำเร็จ');
+    showPopup({title:'กู้ข้อมูลสำเร็จ'});
   };
   r.readAsText(f);
 };
 </script>
-
 </body>
 </html>
