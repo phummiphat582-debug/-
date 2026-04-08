@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
+
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#f0f1f3;font-family:Segoe UI,Tahoma,sans-serif;color:#222}
@@ -35,7 +36,7 @@ td{padding:6px;border-bottom:1px solid #e5e7eb;vertical-align:top}
 
 .actions{margin-top:20px;display:flex;justify-content:flex-end;align-items:center;gap:16px}
 
-/* รูป (ขยายแล้ว) */
+/* รูป */
 .img-box{
   width:130px;
   height:130px;
@@ -46,20 +47,28 @@ td{padding:6px;border-bottom:1px solid #e5e7eb;vertical-align:top}
   justify-content:center;
   cursor:pointer;
   overflow:hidden;
-  background:#fff
+  background:#fff;
+  position:relative;
 }
 .img-box img{width:100%;height:100%;object-fit:cover}
 .img-hint{font-size:11px;color:#64748b;text-align:center}
 
-/* แถวล่างของรายการ */
-.sub-row td{
-  background:#f9fafb;
+/* overlay เปลี่ยนรูป */
+.img-overlay{
+  position:absolute;
+  bottom:4px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,0.6);
+  color:#fff;
+  font-size:10px;
+  padding:2px 8px;
+  border-radius:6px;
 }
-.sub-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:16px;
-}
+
+/* แถวล่าง */
+.sub-row td{background:#f9fafb}
+.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:1000}
 .modal-box{background:#fff;padding:24px;border-radius:16px;width:340px;text-align:center}
@@ -72,6 +81,7 @@ td{padding:6px;border-bottom:1px solid #e5e7eb;vertical-align:top}
 }
 </style>
 </head>
+
 <body>
 
 <div class="page">
@@ -113,36 +123,11 @@ td{padding:6px;border-bottom:1px solid #e5e7eb;vertical-align:top}
     </table>
 
     <button class="btn add" onclick="addRow()">+ เพิ่มรายการ</button>
-    <button class="btn add" onclick="openCopyModal()">📋 คัดลอกจากเดือนก่อนหน้า</button>
   </div>
 
   <div class="actions">
     <strong>รวม <span id="grand">0.00</span> บาท</strong>
-    <button class="btn" onclick="window.print()">🖨 พิมพ์ / Save PDF</button>
-  </div>
-</div>
-
-<!-- modal ลบ -->
-<div class="modal" id="deleteModal">
-  <div class="modal-box">
-    <h3>ยืนยันการลบ</h3>
-    <p>ต้องการลบรายการนี้หรือไม่</p>
-    <div class="modal-actions">
-      <button class="btn ghost" onclick="closeDelete()">ยกเลิก</button>
-      <button class="btn danger" onclick="confirmDelete()">ลบ</button>
-    </div>
-  </div>
-</div>
-
-<!-- modal คัดลอก -->
-<div class="modal" id="copyModal">
-  <div class="modal-box">
-    <h3>คัดลอกจากเดือนก่อน</h3>
-    <input type="month" id="copyFrom" style="margin-top:12px">
-    <div class="modal-actions">
-      <button class="btn ghost" onclick="closeCopy()">ยกเลิก</button>
-      <button class="btn add" onclick="confirmCopy()">คัดลอก</button>
-    </div>
+    <button class="btn" onclick="window.print()">🖨 พิมพ์</button>
   </div>
 </div>
 
@@ -150,10 +135,6 @@ td{padding:6px;border-bottom:1px solid #e5e7eb;vertical-align:top}
 const monthInput=document.getElementById('monthPicker');
 const deptInput=document.getElementById('deptInput');
 const tbody=document.getElementById('tbody');
-let deleteTarget=null;
-
-monthInput.addEventListener('change',loadMonth);
-deptInput.addEventListener('input',saveMonth);
 
 function addRow(d={}){
   const main=document.createElement('tr');
@@ -165,78 +146,82 @@ function addRow(d={}){
     <td><textarea>${d.desc||''}</textarea></td>
     <td>
       <div class="img-box">
-        ${d.img?`<img src="${d.img}">`:'<span class="img-hint">แนบรูป</span>'}
+        ${d.img?`<img src="${d.img}"><div class="img-overlay">เปลี่ยนรูป</div>`:'<span class="img-hint">แนบรูป</span>'}
         <input type="file" hidden>
       </div>
     </td>
     <td><input value="${d.unit||''}"></td>
     <td><input type="number" value="${d.stock||''}"></td>
-    <td><input type="text" value="${d.remain||''}"></td>
+    <td><input value="${d.remain||''}"></td>
     <td><input type="number" class="buy" value="${d.buy||0}"></td>
     <td><input type="number" class="price" value="${d.price||0}"></td>
     <td class="sum">0.00</td>
     <td><input value="${d.vendor||''}"></td>
-    <td><button class="btn-del" onclick="askDelete(this)">🗑</button></td>
+    <td><button class="btn-del" onclick="deleteRow(this)">🗑</button></td>
   `;
 
   sub.innerHTML=`
     <td colspan="11">
       <div class="sub-grid">
-        <div>
-          <label>จุดประสงค์</label>
-          <textarea>${d.purpose||''}</textarea>
-        </div>
-        <div>
-          <label>สถานที่ใช้งาน</label>
-          <textarea>${d.location||''}</textarea>
-        </div>
+        <textarea placeholder="จุดประสงค์">${d.purpose||''}</textarea>
+        <textarea placeholder="สถานที่">${d.location||''}</textarea>
       </div>
     </td>
   `;
 
   tbody.appendChild(main);
   tbody.appendChild(sub);
+
   bindRow(main,sub);
-  renumber(); calcAll(); saveMonth();
+  renumber();
+  calcAll();
 }
 
 function bindRow(main,sub){
-  [...main.querySelectorAll('input,textarea'),...sub.querySelectorAll('textarea')]
-    .forEach(el=>el.addEventListener('input',()=>{calcAll();saveMonth();}));
-
   const box=main.querySelector('.img-box');
   const file=box.querySelector('input');
+
   box.onclick=()=>file.click();
+
   file.onchange=()=>{
     const r=new FileReader();
     r.onload=()=>{
-      box.innerHTML=`<img src="${r.result}"><input type="file" hidden>`;
-      bindRow(main,sub); saveMonth();
-    }
+      box.innerHTML=`
+        <img src="${r.result}">
+        <input type="file" hidden>
+        <div class="img-overlay">เปลี่ยนรูป</div>
+      `;
+      bindRow(main,sub);
+    };
     r.readAsDataURL(file.files[0]);
   };
+
+  main.querySelectorAll('input,textarea').forEach(el=>{
+    el.oninput=calcAll;
+  });
 }
 
-function askDelete(btn){
-  deleteTarget=btn.closest('tr');
-  deleteModal.style.display='flex';
-}
-function closeDelete(){deleteModal.style.display='none'}
-function confirmDelete(){
-  const sub=deleteTarget.nextSibling;
-  deleteTarget.remove(); sub.remove();
-  closeDelete(); renumber(); calcAll(); saveMonth();
+function deleteRow(btn){
+  const row=btn.closest('tr');
+  const sub=row.nextSibling;
+  row.remove();
+  sub.remove();
+  renumber();
+  calcAll();
 }
 
 function calcAll(){
   let g=0;
   tbody.querySelectorAll('tr').forEach(tr=>{
-    if(!tr.querySelector('.buy')) return;
-    const q=tr.querySelector('.buy').value||0;
-    const p=tr.querySelector('.price').value||0;
-    const s=(q*p).toFixed(2);
-    tr.querySelector('.sum').innerText=s;
-    g+=+s;
+    const buy=tr.querySelector('.buy');
+    if(!buy) return;
+
+    const q=+buy.value||0;
+    const p=+tr.querySelector('.price').value||0;
+    const s=q*p;
+
+    tr.querySelector('.sum').innerText=s.toFixed(2);
+    g+=s;
   });
   grand.innerText=g.toFixed(2);
 }
@@ -244,52 +229,6 @@ function calcAll(){
 function renumber(){
   let i=1;
   tbody.querySelectorAll('.no').forEach(n=>n.innerText=i++);
-}
-
-function saveMonth(){
-  if(!monthInput.value) return;
-  const rows=[];
-  const trs=[...tbody.children];
-  for(let i=0;i<trs.length;i+=2){
-    const m=trs[i], s=trs[i+1];
-    rows.push({
-      desc:m.children[1].querySelector('textarea').value,
-      img:m.querySelector('img')?.src||'',
-      unit:m.children[3].querySelector('input').value,
-      stock:m.children[4].querySelector('input').value,
-      remain:m.children[5].querySelector('input').value,
-      buy:m.children[6].querySelector('input').value,
-      price:m.children[7].querySelector('input').value,
-      vendor:m.children[9].querySelector('input').value,
-      purpose:s.querySelectorAll('textarea')[0].value,
-      location:s.querySelectorAll('textarea')[1].value
-    });
-  }
-  localStorage.setItem('PO_'+monthInput.value,JSON.stringify({dept:deptInput.value,rows}));
-}
-
-function loadMonth(){
-  tbody.innerHTML='';
-  const raw=localStorage.getItem('PO_'+monthInput.value);
-  if(!raw){addRow();return;}
-  const d=JSON.parse(raw);
-  deptInput.value=d.dept||'';
-  d.rows.forEach(r=>addRow(r));
-}
-
-function openCopyModal(){
-  if(!monthInput.value) return alert('เลือกเดือนก่อน');
-  const d=new Date(monthInput.value+'-01');
-  d.setMonth(d.getMonth()-1);
-  copyFrom.value=d.toISOString().slice(0,7);
-  copyModal.style.display='flex';
-}
-function closeCopy(){copyModal.style.display='none'}
-function confirmCopy(){
-  const raw=localStorage.getItem('PO_'+copyFrom.value);
-  if(!raw) return alert('ไม่พบข้อมูล');
-  localStorage.setItem('PO_'+monthInput.value,raw);
-  closeCopy(); loadMonth();
 }
 
 addRow();
