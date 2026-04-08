@@ -2,31 +2,38 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>ใบสั่งซื้อสินค้า</title>
+<title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#f0f1f3;font-family:sans-serif}
-.page{max-width:1600px;margin:20px auto;background:#fff;padding:20px;border-radius:12px}
+body{margin:0;background:#f0f1f3;font-family:Segoe UI,Tahoma,sans-serif;color:#222}
+.page{max-width:1800px;margin:32px auto;background:#fff;padding:32px;border-radius:16px}
 
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{background:#333;color:#fff;padding:6px}
-td{padding:6px;border-bottom:1px solid #ddd}
+th{background:#2f2f2f;color:#fff;padding:8px}
+td{padding:6px;border-bottom:1px solid #e5e7eb}
 
-input,textarea{width:100%;font-size:12px}
+input,textarea{width:100%;padding:6px;border:1px solid #ccc;border-radius:6px}
 
 .img-box{
-  width:120px;height:120px;border:2px dashed #aaa;
+  width:130px;height:130px;
+  border:2px dashed #94a3b8;
   display:flex;align-items:center;justify-content:center;
-  cursor:pointer;overflow:hidden;position:relative
+  cursor:pointer;overflow:hidden;
+  position:relative;background:#fff;
 }
 .img-box img{width:100%;height:100%;object-fit:cover}
+
 .img-overlay{
-  position:absolute;bottom:4px;left:50%;
+  position:absolute;
+  bottom:4px;left:50%;
   transform:translateX(-50%);
-  background:rgba(0,0,0,.6);color:#fff;
-  font-size:10px;padding:2px 6px;border-radius:6px
+  background:rgba(0,0,0,0.6);
+  color:#fff;font-size:10px;
+  padding:2px 8px;border-radius:6px;
 }
+
+.btn{padding:6px 12px;border:none;border-radius:8px;cursor:pointer}
 </style>
 </head>
 
@@ -48,29 +55,41 @@ input,textarea{width:100%;font-size:12px}
 </table>
 
 <button onclick="addRow()">+ เพิ่ม</button>
-<button onclick="openCopy()">คัดลอกเดือนก่อน</button>
 
 <h3>รวม: <span id="grand">0</span></h3>
 
 </div>
 
 <script>
+let db;
+const req=indexedDB.open('PO_IMG',1);
+
+req.onupgradeneeded=e=>{
+  db=e.target.result;
+  db.createObjectStore('img',{keyPath:'id'});
+};
+
+req.onsuccess=e=>db=e.target.result;
+
 const tbody=document.getElementById('tbody');
-const monthInput=document.getElementById('monthPicker');
+const monthPicker=document.getElementById('monthPicker');
 const deptInput=document.getElementById('deptInput');
 
-monthInput.onchange=loadMonth;
+monthPicker.onchange=loadMonth;
 deptInput.oninput=saveMonth;
 
 function addRow(d={}){
+  const id=d.id||crypto.randomUUID();
+
   const tr=document.createElement('tr');
+  tr.dataset.id=id;
 
   tr.innerHTML=`
   <td class="no"></td>
   <td><textarea>${d.desc||''}</textarea></td>
   <td>
     <div class="img-box">
-      ${d.img?`<img src="${d.img}"><div class="img-overlay">เปลี่ยน</div>`:'แนบรูป'}
+      <span>แนบรูป</span>
       <input type="file" hidden>
     </div>
   </td>
@@ -82,29 +101,53 @@ function addRow(d={}){
 
   tbody.appendChild(tr);
   bind(tr);
-  renumber();
-  calc();
-  saveMonth();
+
+  // โหลดรูป
+  const tx=db.transaction('img','readonly')
+    .objectStore('img').get(id);
+
+  tx.onsuccess=e=>{
+    if(e.target.result){
+      setImg(tr,id,e.target.result.data);
+    }
+  };
+
+  renumber(); calc(); saveMonth();
+}
+
+function setImg(tr,id,src){
+  const box=tr.querySelector('.img-box');
+  box.innerHTML=`
+    <img src="${src}">
+    <input type="file" hidden>
+    <div class="img-overlay">เปลี่ยนรูป</div>
+  `;
+  bind(tr);
 }
 
 function bind(tr){
   const box=tr.querySelector('.img-box');
   const file=box.querySelector('input');
+  const id=tr.dataset.id;
 
   box.onclick=()=>file.click();
 
   file.onchange=()=>{
+    const f=file.files[0];
+    if(!f) return;
+
     const r=new FileReader();
     r.onload=()=>{
-      box.innerHTML=`
-        <img src="${r.result}">
-        <input type="file" hidden>
-        <div class="img-overlay">เปลี่ยน</div>
-      `;
-      bind(tr);
+      const src=r.result;
+
+      db.transaction('img','readwrite')
+        .objectStore('img')
+        .put({id,data:src});
+
+      setImg(tr,id,src);
       saveMonth();
     };
-    r.readAsDataURL(file.files[0]);
+    r.readAsDataURL(f);
   };
 
   tr.querySelectorAll('input,textarea').forEach(el=>{
@@ -117,9 +160,7 @@ function bind(tr){
 
 function del(btn){
   btn.closest('tr').remove();
-  renumber();
-  calc();
-  saveMonth();
+  renumber(); calc(); saveMonth();
 }
 
 function calc(){
@@ -140,17 +181,19 @@ function renumber(){
 }
 
 function saveMonth(){
-  if(!monthInput.value) return;
+  if(!monthPicker.value) return;
+
   const data=[];
   tbody.querySelectorAll('tr').forEach(tr=>{
     data.push({
+      id:tr.dataset.id,
       desc:tr.children[1].querySelector('textarea').value,
-      img:tr.querySelector('img')?.src||'',
       buy:tr.querySelector('.buy').value,
       price:tr.querySelector('.price').value
     });
   });
-  localStorage.setItem('PO_'+monthInput.value,JSON.stringify({
+
+  localStorage.setItem('PO_'+monthPicker.value,JSON.stringify({
     dept:deptInput.value,
     rows:data
   }));
@@ -158,23 +201,12 @@ function saveMonth(){
 
 function loadMonth(){
   tbody.innerHTML='';
-  const raw=localStorage.getItem('PO_'+monthInput.value);
+  const raw=localStorage.getItem('PO_'+monthPicker.value);
   if(!raw){addRow();return;}
+
   const d=JSON.parse(raw);
   deptInput.value=d.dept||'';
   d.rows.forEach(r=>addRow(r));
-}
-
-function openCopy(){
-  const d=new Date(monthInput.value+'-01');
-  d.setMonth(d.getMonth()-1);
-  const key='PO_'+d.toISOString().slice(0,7);
-
-  const old=localStorage.getItem(key);
-  if(!old) return alert('ไม่มีข้อมูลเดือนก่อน');
-
-  localStorage.setItem('PO_'+monthInput.value,old);
-  loadMonth();
 }
 
 addRow();
