@@ -2,82 +2,30 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>ใบสั่งซื้อสินค้า | THE SCENERY VINTAGE FARM</title>
+<title>ใบสั่งซื้อสินค้า</title>
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#f0f1f3;font-family:Segoe UI,Tahoma,sans-serif;color:#222}
-.page{max-width:1800px;margin:32px auto;background:#fff;padding:32px 36px;border-radius:16px}
-
-.header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:1px solid #d6d9de;padding-bottom:16px}
-.header-left h1{margin:0;font-size:28px}
-.header-left h2{margin:4px 0 0;font-size:16px;color:#666}
-.header-right{display:flex;gap:20px}
-
-label{font-size:12px;font-weight:600;color:#555}
-input,textarea{
-  width:100%;
-  padding:6px 8px;
-  border:1px solid #d1d5db;
-  border-radius:8px;
-  font-size:12px
-}
-textarea{resize:vertical}
-
-.card{margin-top:24px;background:#fafafa;padding:20px;border-radius:16px}
+body{margin:0;background:#f0f1f3;font-family:sans-serif}
+.page{max-width:1600px;margin:20px auto;background:#fff;padding:20px;border-radius:12px}
 
 table{width:100%;border-collapse:collapse;font-size:12px}
-th{background:#2f2f2f;color:#fff;padding:8px}
-td{padding:6px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+th{background:#333;color:#fff;padding:6px}
+td{padding:6px;border-bottom:1px solid #ddd}
 
-.btn{padding:8px 18px;border-radius:12px;font-weight:600;border:none;cursor:pointer}
-.btn.add{background:#e6e8ec}
-.btn-del{background:#fee2e2;border:none;border-radius:8px;padding:4px 8px;cursor:pointer}
+input,textarea{width:100%;font-size:12px}
 
-.actions{margin-top:20px;display:flex;justify-content:flex-end;align-items:center;gap:16px}
-
-/* รูป */
 .img-box{
-  width:130px;
-  height:130px;
-  border:2px dashed #94a3b8;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  overflow:hidden;
-  background:#fff;
-  position:relative;
+  width:120px;height:120px;border:2px dashed #aaa;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;overflow:hidden;position:relative
 }
 .img-box img{width:100%;height:100%;object-fit:cover}
-.img-hint{font-size:11px;color:#64748b;text-align:center}
-
-/* overlay เปลี่ยนรูป */
 .img-overlay{
-  position:absolute;
-  bottom:4px;
-  left:50%;
+  position:absolute;bottom:4px;left:50%;
   transform:translateX(-50%);
-  background:rgba(0,0,0,0.6);
-  color:#fff;
-  font-size:10px;
-  padding:2px 8px;
-  border-radius:6px;
-}
-
-/* แถวล่าง */
-.sub-row td{background:#f9fafb}
-.sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:1000}
-.modal-box{background:#fff;padding:24px;border-radius:16px;width:340px;text-align:center}
-.modal-actions{display:flex;justify-content:center;gap:12px;margin-top:16px}
-.modal .danger{background:#dc2626;color:#fff}
-.modal .ghost{background:#e5e7eb}
-
-@media print{
-  button,.btn-del{display:none!important}
+  background:rgba(0,0,0,.6);color:#fff;
+  font-size:10px;padding:2px 6px;border-radius:6px
 }
 </style>
 </head>
@@ -85,100 +33,62 @@ td{padding:6px;border-bottom:1px solid #e5e7eb;vertical-align:top}
 <body>
 
 <div class="page">
-  <div class="header">
-    <div class="header-left">
-      <h1>ใบสั่งซื้อสินค้า</h1>
-      <h2>THE SCENERY VINTAGE FARM</h2>
-    </div>
-    <div class="header-right">
-      <div>
-        <label>เดือน</label>
-        <input type="month" id="monthPicker">
-      </div>
-      <div>
-        <label>แผนก</label>
-        <input type="text" id="deptInput">
-      </div>
-    </div>
-  </div>
 
-  <div class="card">
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>รายละเอียด</th>
-          <th>รูป</th>
-          <th>หน่วย</th>
-          <th>สต็อก</th>
-          <th>คงเหลือ</th>
-          <th>ซื้อเพิ่ม</th>
-          <th>ราคา</th>
-          <th>รวม</th>
-          <th>ร้าน</th>
-          <th>ลบ</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
+<input type="month" id="monthPicker">
+<input type="text" id="deptInput" placeholder="แผนก">
 
-    <button class="btn add" onclick="addRow()">+ เพิ่มรายการ</button>
-  </div>
+<table>
+<thead>
+<tr>
+<th>#</th><th>รายละเอียด</th><th>รูป</th>
+<th>ซื้อ</th><th>ราคา</th><th>รวม</th><th>ลบ</th>
+</tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
 
-  <div class="actions">
-    <strong>รวม <span id="grand">0.00</span> บาท</strong>
-    <button class="btn" onclick="window.print()">🖨 พิมพ์</button>
-  </div>
+<button onclick="addRow()">+ เพิ่ม</button>
+<button onclick="openCopy()">คัดลอกเดือนก่อน</button>
+
+<h3>รวม: <span id="grand">0</span></h3>
+
 </div>
 
 <script>
+const tbody=document.getElementById('tbody');
 const monthInput=document.getElementById('monthPicker');
 const deptInput=document.getElementById('deptInput');
-const tbody=document.getElementById('tbody');
+
+monthInput.onchange=loadMonth;
+deptInput.oninput=saveMonth;
 
 function addRow(d={}){
-  const main=document.createElement('tr');
-  const sub=document.createElement('tr');
-  sub.className='sub-row';
+  const tr=document.createElement('tr');
 
-  main.innerHTML=`
-    <td class="no"></td>
-    <td><textarea>${d.desc||''}</textarea></td>
-    <td>
-      <div class="img-box">
-        ${d.img?`<img src="${d.img}"><div class="img-overlay">เปลี่ยนรูป</div>`:'<span class="img-hint">แนบรูป</span>'}
-        <input type="file" hidden>
-      </div>
-    </td>
-    <td><input value="${d.unit||''}"></td>
-    <td><input type="number" value="${d.stock||''}"></td>
-    <td><input value="${d.remain||''}"></td>
-    <td><input type="number" class="buy" value="${d.buy||0}"></td>
-    <td><input type="number" class="price" value="${d.price||0}"></td>
-    <td class="sum">0.00</td>
-    <td><input value="${d.vendor||''}"></td>
-    <td><button class="btn-del" onclick="deleteRow(this)">🗑</button></td>
+  tr.innerHTML=`
+  <td class="no"></td>
+  <td><textarea>${d.desc||''}</textarea></td>
+  <td>
+    <div class="img-box">
+      ${d.img?`<img src="${d.img}"><div class="img-overlay">เปลี่ยน</div>`:'แนบรูป'}
+      <input type="file" hidden>
+    </div>
+  </td>
+  <td><input class="buy" type="number" value="${d.buy||0}"></td>
+  <td><input class="price" type="number" value="${d.price||0}"></td>
+  <td class="sum">0</td>
+  <td><button onclick="del(this)">ลบ</button></td>
   `;
 
-  sub.innerHTML=`
-    <td colspan="11">
-      <div class="sub-grid">
-        <textarea placeholder="จุดประสงค์">${d.purpose||''}</textarea>
-        <textarea placeholder="สถานที่">${d.location||''}</textarea>
-      </div>
-    </td>
-  `;
-
-  tbody.appendChild(main);
-  tbody.appendChild(sub);
-
-  bindRow(main,sub);
+  tbody.appendChild(tr);
+  bind(tr);
   renumber();
-  calcAll();
+  calc();
+  saveMonth();
 }
 
-function bindRow(main,sub){
-  const box=main.querySelector('.img-box');
+function bind(tr){
+  const box=tr.querySelector('.img-box');
   const file=box.querySelector('input');
 
   box.onclick=()=>file.click();
@@ -189,37 +99,35 @@ function bindRow(main,sub){
       box.innerHTML=`
         <img src="${r.result}">
         <input type="file" hidden>
-        <div class="img-overlay">เปลี่ยนรูป</div>
+        <div class="img-overlay">เปลี่ยน</div>
       `;
-      bindRow(main,sub);
+      bind(tr);
+      saveMonth();
     };
     r.readAsDataURL(file.files[0]);
   };
 
-  main.querySelectorAll('input,textarea').forEach(el=>{
-    el.oninput=calcAll;
+  tr.querySelectorAll('input,textarea').forEach(el=>{
+    el.oninput=()=>{
+      calc();
+      saveMonth();
+    };
   });
 }
 
-function deleteRow(btn){
-  const row=btn.closest('tr');
-  const sub=row.nextSibling;
-  row.remove();
-  sub.remove();
+function del(btn){
+  btn.closest('tr').remove();
   renumber();
-  calcAll();
+  calc();
+  saveMonth();
 }
 
-function calcAll(){
+function calc(){
   let g=0;
   tbody.querySelectorAll('tr').forEach(tr=>{
-    const buy=tr.querySelector('.buy');
-    if(!buy) return;
-
-    const q=+buy.value||0;
+    const q=+tr.querySelector('.buy').value||0;
     const p=+tr.querySelector('.price').value||0;
     const s=q*p;
-
     tr.querySelector('.sum').innerText=s.toFixed(2);
     g+=s;
   });
@@ -229,6 +137,44 @@ function calcAll(){
 function renumber(){
   let i=1;
   tbody.querySelectorAll('.no').forEach(n=>n.innerText=i++);
+}
+
+function saveMonth(){
+  if(!monthInput.value) return;
+  const data=[];
+  tbody.querySelectorAll('tr').forEach(tr=>{
+    data.push({
+      desc:tr.children[1].querySelector('textarea').value,
+      img:tr.querySelector('img')?.src||'',
+      buy:tr.querySelector('.buy').value,
+      price:tr.querySelector('.price').value
+    });
+  });
+  localStorage.setItem('PO_'+monthInput.value,JSON.stringify({
+    dept:deptInput.value,
+    rows:data
+  }));
+}
+
+function loadMonth(){
+  tbody.innerHTML='';
+  const raw=localStorage.getItem('PO_'+monthInput.value);
+  if(!raw){addRow();return;}
+  const d=JSON.parse(raw);
+  deptInput.value=d.dept||'';
+  d.rows.forEach(r=>addRow(r));
+}
+
+function openCopy(){
+  const d=new Date(monthInput.value+'-01');
+  d.setMonth(d.getMonth()-1);
+  const key='PO_'+d.toISOString().slice(0,7);
+
+  const old=localStorage.getItem(key);
+  if(!old) return alert('ไม่มีข้อมูลเดือนก่อน');
+
+  localStorage.setItem('PO_'+monthInput.value,old);
+  loadMonth();
 }
 
 addRow();
